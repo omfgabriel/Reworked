@@ -128,7 +128,7 @@
         {
             var minion =
                 MinionManager.GetMinions(this.Range)
-                    .Where(obj => obj.CharData.BaseSkinName.EndsWith("MinionSiege") &&  obj.HasBuff("dianamoonlight") && this.SpellObject.IsKillable(obj))
+                    .Where(obj => obj.CharData.BaseSkinName.EndsWith("MinionSiege") && obj.HasBuff("dianamoonlight") && this.SpellObject.IsKillable(obj))
                     .MinOrDefault(obj => obj.Health);
 
             if (minion != null && MyMenu.RootMenu.Item("laneclear.r.siege").IsActive())

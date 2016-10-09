@@ -217,14 +217,6 @@
         }
 
         /// <summary>
-        /// 
-        /// </summary>
-        private void PermaActive()
-        {
-            
-        }
-
-        /// <summary>
         ///     The load spells method.
         /// </summary>
         /// <param name="spellList">

@@ -75,7 +75,7 @@
 
                 node.AddSubMenu(nodeCombo);
 
-                if (!spellSlotNameLower.Equals("r", StringComparison.InvariantCultureIgnoreCase))
+                if ((!spellSlotNameLower.Equals("r", StringComparison.InvariantCultureIgnoreCase) && !spellSlotNameLower.Equals("e", StringComparison.InvariantCultureIgnoreCase)))
                 {
                     var nodeMixed = new Menu("Mixed", spellSlotNameLower + "mixedmenu");
                     {
@@ -104,7 +104,7 @@
                 }
 
 
-                if (!spellSlotNameLower.Equals("r", StringComparison.InvariantCultureIgnoreCase))
+                if ((!spellSlotNameLower.Equals("r", StringComparison.InvariantCultureIgnoreCase) && !spellSlotNameLower.Equals("e", StringComparison.InvariantCultureIgnoreCase)))
                 {
                     var nodeLaneClear = new Menu("Clear", spellSlotNameLower + "laneclearmenu");
                     {

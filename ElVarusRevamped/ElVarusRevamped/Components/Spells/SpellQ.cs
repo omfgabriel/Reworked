@@ -2,6 +2,7 @@
 {
     using System;
     using System.Linq;
+    using System.Runtime.CompilerServices;
 
     using ElVarusRevamped.Enumerations;
     using ElVarusRevamped.Utils;
@@ -39,7 +40,7 @@
         /// <summary>
         ///     Gets the range.
         /// </summary>
-        internal override float Range => 1700f; // Max range
+        internal override float Range => 925f; // Max range 1700
 
         /// <summary>
         ///     Gets or sets the skillshot type.
@@ -77,25 +78,25 @@
                     return;
                 }
 
-                var target = Misc.GetTarget(this.Range + this.Width * 1.1f, this.DamageType);
+                var target = Misc.GetTarget(this.SpellObject.ChargedMaxRange + this.Width * 1.1f, this.DamageType);
                 if (target != null)
                 {
-                    if (this.SpellObject.IsKillable(target) || target.Distance(ObjectManager.Player) > Orbwalking.GetRealAutoAttackRange(target) * 1.2f || this.SpellObject.IsCharging || MyMenu.RootMenu.Item("comboqalways").IsActive() || Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("combow.count").GetValue<Slider>().Value)
+                    Logging.AddEntry(LoggingEntryTrype.Info, "@SpellQ.cs: Target - {0}", target.ChampionName);
+
+                    if (this.SpellObject.IsCharging || this.SpellObject.IsKillable(target) || target.Distance(ObjectManager.Player) > Orbwalking.GetRealAutoAttackRange(target) * 1.2f || MyMenu.RootMenu.Item("comboqalways").IsActive() || Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("combow.count").GetValue<Slider>().Value)
                     {
                         if (!this.SpellObject.IsCharging)
                         {
                             this.SpellObject.StartCharging();
                         }
                             
-                        if (this.SpellObject.IsCharging)
+                        if (this.SpellObject.IsCharging || this.MaxRangeQ())
                         {
                             var prediction = this.SpellObject.GetPrediction(target);
                             if (prediction.Hitchance >= HitChance.VeryHigh)
                             {
                                 this.SpellObject.Cast(prediction.CastPosition);
                             }
-
-                            Logging.AddEntry(LoggingEntryTrype.Info, "@SpellQ.cs: AoeTargetsHitCount - {0}", prediction.AoeTargetsHitCount);
                         }
                     }
                 }
@@ -105,6 +106,15 @@
                 Logging.AddEntry(LoggingEntryTrype.Error, "@SpellQ.cs: Can not run OnCombo - {0}", e);
                 throw;
             }
+        }
+
+        /// <summary>
+        ///     Gets the Q
+        /// </summary>
+        /// <returns></returns>
+        internal bool MaxRangeQ()
+        {
+            return this.SpellObject.ChargedMaxRange - this.SpellObject.Range < 200;
         }
 
         /// <summary>
@@ -121,7 +131,7 @@
         internal override void OnLastHit()
         {
             var minion =
-                MinionManager.GetMinions(this.Range)
+                MinionManager.GetMinions(this.SpellObject.ChargedMaxRange)
                     .Where(obj => this.SpellObject.IsKillable(obj))
                     .MinOrDefault(obj => obj.Health);
 

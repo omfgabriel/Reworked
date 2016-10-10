@@ -34,7 +34,7 @@
         {
             try
             {
-                this.LoadSpells(new List<ISpell>() { new SpellR(), new SpellE(), new SpellQ() });
+                this.LoadSpells(new List<ISpell>() { new SpellQ(), new SpellE(), new SpellR() });
             }
             catch (Exception e)
             {
@@ -114,6 +114,13 @@
             {
                 var orbwalkerModeLower = Program.Orbwalker.ActiveMode.ToString().ToLower();
                 var spellSlotNameLower = spellSlot.ToString().ToLower();
+
+                if ((orbwalkerModeLower.Equals("lasthit")
+                    && (spellSlotNameLower.Equals("w")
+                        || spellSlotNameLower.Equals("r") || spellSlotNameLower.Equals("e"))) || (orbwalkerModeLower.Equals("laneclear") && (spellSlotNameLower.Equals("w") || spellSlotNameLower.Equals("r"))))
+                {
+                    return false;
+                }
 
                 return MyMenu.RootMenu.Item(orbwalkerModeLower + spellSlotNameLower + "use").GetValue<bool>()
                        && MyMenu.RootMenu.Item(orbwalkerModeLower + spellSlotNameLower + "mana")

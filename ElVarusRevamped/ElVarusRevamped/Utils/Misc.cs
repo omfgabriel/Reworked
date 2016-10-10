@@ -22,7 +22,15 @@
         /// <returns></returns>
         internal static int GetWStacks(Obj_AI_Base target)
         {
-            return target.GetBuffCount("varuswdebuff");
+            try
+            {
+                return target.GetBuffCount("varuswdebuff");
+            }
+            catch (Exception e)
+            {
+                Logging.AddEntry(LoggingEntryTrype.Error, "@Misc.cs: Can not return target - {0}", e);
+                throw;
+            }
         }
 
         /// <summary>

@@ -16,6 +16,16 @@
         #region Methods
 
         /// <summary>
+        ///     Gets the target W stacks
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        internal static int GetWStacks(Obj_AI_Base target)
+        {
+            return target.GetBuffCount("varuswdebuff");
+        }
+
+        /// <summary>
         ///     Gets a target from the common target selector.
         /// </summary>
         /// <param name="range">

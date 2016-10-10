@@ -57,7 +57,6 @@
     <Compile Include="Components\Spells\SpellE.cs" />
     <Compile Include="Components\Spells\SpellQ.cs" />
     <Compile Include="Components\Spells\SpellR.cs" />
-    <Compile Include="Components\Spells\SpellW.cs" />
     <Compile Include="Enumerations\LoggingEntryTrype.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

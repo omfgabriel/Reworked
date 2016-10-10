@@ -60,17 +60,33 @@
                 {
                     nodeCombo.AddItem(new MenuItem("combo" + spellSlotNameLower + "use", "Use " + spellSlotName).SetValue(true));
                     nodeCombo.AddItem(new MenuItem("combo" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(5)));
+
+                    if (spellSlotNameLower.Equals("q", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        nodeCombo.AddItem(new MenuItem("comboqalways", "Always use " + spellSlotName).SetValue(true));
+                        nodeCombo.AddItem(new MenuItem("combow.count", "Minions hit Q").SetValue(new Slider(3, 1, 3)));
+                    }
+
+                    if (spellSlotNameLower.Equals("r", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        nodeCombo.AddItem(new MenuItem("combor.count", "Enmies hit R").SetValue(new Slider(3, 1, 5)));
+                    }
                 }
 
                 node.AddSubMenu(nodeCombo);
 
-                var nodeMixed = new Menu("Mixed", spellSlotNameLower + "mixedmenu");
+                if (!spellSlotNameLower.Equals("r", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    nodeMixed.AddItem(new MenuItem("mixed" + spellSlotNameLower + "use", "Use " + spellSlotName).SetValue(true));
-                    nodeMixed.AddItem(new MenuItem("mixed" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(50)));
-                }
+                    var nodeMixed = new Menu("Mixed", spellSlotNameLower + "mixedmenu");
+                    {
+                        nodeMixed.AddItem(
+                            new MenuItem("mixed" + spellSlotNameLower + "use", "Use " + spellSlotName).SetValue(true));
+                        nodeMixed.AddItem(
+                            new MenuItem("mixed" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(50)));
+                    }
 
-                node.AddSubMenu(nodeMixed);
+                    node.AddSubMenu(nodeMixed);
+                }
 
                 if (spellSlotNameLower.Equals("q", StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -78,6 +94,9 @@
                     {
                         nodeLastHit.AddItem(
                             new MenuItem("lasthit" + spellSlotNameLower + "use", "Use " + spellSlotName).SetValue(true));
+
+                        nodeLastHit.AddItem(new MenuItem("lasthit.mode", "Q mode").SetValue(new StringList(new[] { "Always", "Out of range" }, 0)));
+
                         nodeLastHit.AddItem(
                             new MenuItem("lasthit" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(50)));
                     }

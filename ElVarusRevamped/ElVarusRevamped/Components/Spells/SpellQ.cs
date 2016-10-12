@@ -17,14 +17,6 @@
     /// </summary>
     internal class SpellQ : ISpell
     {
-        /// <summary>
-        ///     Constructor
-        /// </summary>
-        internal SpellQ()
-        {
-            this.SpellObject.SetCharged("VarusQ", "VarusQ", 250, 1700, 1.5f);
-        }
-
         #region Properties
 
         /// <summary>
@@ -40,7 +32,7 @@
         /// <summary>
         ///     Gets the range.
         /// </summary>
-        internal override float Range => 925f; // Max range 1700
+        internal override float Range => 925f;
 
         /// <summary>
         ///     Gets or sets the skillshot type.
@@ -52,7 +44,7 @@
         /// </summary>
         internal override float Speed => 1800f;
 
-        /// <summary>
+        /// <summary>   
         ///     Gets the spell slot.
         /// </summary>
         internal override SpellSlot SpellSlot => SpellSlot.Q;
@@ -61,6 +53,36 @@
         ///     Gets the width.
         /// </summary>
         internal override float Width => 70f;
+
+        /// <summary>
+        ///     Gets the min range.
+        /// </summary>
+        internal override int MinRange => 925;
+
+        /// <summary>
+        ///     Gets the max range.
+        /// </summary>
+        internal override int MaxRange => 1700;
+
+        /// <summary>
+        ///     Gets the delta T
+        /// </summary>
+        internal override float DeltaT => 1.5f;
+
+        /// <summary>
+        ///     Gets the spellname.
+        /// </summary>
+        internal override string SpellName => "VarusQ";
+
+        /// <summary>
+        ///     Gets the buffname.
+        /// </summary>
+        internal override string BuffName => "VarusQ";
+
+        /// <summary>
+        ///     Sets the charged spell.
+        /// </summary>
+        internal override bool Charged => true;
 
         #endregion
 
@@ -78,22 +100,25 @@
                     return;
                 }
 
-                var target = Misc.GetTarget(this.SpellObject.ChargedMaxRange + this.Width * 1.1f, this.DamageType);
+                var target = Misc.GetTarget((this.SpellObject.ChargedMaxRange + this.Width) * 1.1f, this.DamageType);
                 if (target != null)
                 {
-                    Logging.AddEntry(LoggingEntryTrype.Info, "@SpellQ.cs: Target - {0}", target.ChampionName);
-
-                    if (this.SpellObject.IsCharging || this.SpellObject.IsKillable(target) || target.Distance(ObjectManager.Player) > Orbwalking.GetRealAutoAttackRange(target) * 1.2f || MyMenu.RootMenu.Item("comboqalways").IsActive() || Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("combow.count").GetValue<Slider>().Value)
+                    if (this.SpellObject.IsCharging || 
+                        this.SpellObject.IsKillable(target) || 
+                        target.Distance(ObjectManager.Player) > Orbwalking.GetRealAutoAttackRange(target) * 1.2f || 
+                        MyMenu.RootMenu.Item("comboqalways").IsActive() || 
+                        Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("combow.count").GetValue<Slider>().Value)
                     {
                         if (!this.SpellObject.IsCharging)
                         {
                             this.SpellObject.StartCharging();
                         }
-                            
-                        if (this.SpellObject.IsCharging || this.MaxRangeQ())
+
+                        if (this.SpellObject.IsCharging) 
                         {
                             var prediction = this.SpellObject.GetPrediction(target);
-                            if (prediction.Hitchance >= HitChance.VeryHigh)
+                            Logging.AddEntry(LoggingEntryTrype.Info, "@SpellQ.cs: OnCombo prediction hitchane - {0} and target {1}", prediction.Hitchance, target.ChampionName);
+                            if (prediction.Hitchance >= HitChance.High)
                             {
                                 this.SpellObject.Cast(prediction.CastPosition);
                             }
@@ -106,15 +131,6 @@
                 Logging.AddEntry(LoggingEntryTrype.Error, "@SpellQ.cs: Can not run OnCombo - {0}", e);
                 throw;
             }
-        }
-
-        /// <summary>
-        ///     Gets the Q
-        /// </summary>
-        /// <returns></returns>
-        internal bool MaxRangeQ()
-        {
-            return this.SpellObject.ChargedMaxRange - this.SpellObject.Range < 200;
         }
 
         /// <summary>
@@ -131,7 +147,7 @@
         internal override void OnLastHit()
         {
             var minion =
-                MinionManager.GetMinions(this.SpellObject.ChargedMaxRange)
+                MinionManager.GetMinions(this.SpellObject.ChargedMaxRange + this.SpellObject.Width)
                     .Where(obj => this.SpellObject.IsKillable(obj))
                     .MinOrDefault(obj => obj.Health);
 
@@ -152,7 +168,7 @@
                     {
                         if (Vector3.Distance(minion.ServerPosition, ObjectManager.Player.ServerPosition)
                             > Orbwalking.GetRealAutoAttackRange(ObjectManager.Player)
-                            && ObjectManager.Player.Distance(minion) <= this.Range)
+                            && ObjectManager.Player.Distance(minion) <= this.SpellObject.ChargedMaxRange)
                         {
                             this.SpellObject.Cast(minion);
                         }
@@ -166,11 +182,10 @@
         /// </summary>
         internal override void OnLaneClear()
         {
-            var minions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, this.SpellObject.Range + this.SpellObject.Width);
-            var minion = this.SpellObject.GetCircularFarmLocation(minions, this.SpellObject.Width);
-            var minionsHit = minion.MinionsHit;
+            var minions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, this.SpellObject.ChargedMaxRange + this.SpellObject.Width);
+            var minion = this.SpellObject.GetLineFarmLocation(minions, this.SpellObject.ChargedMaxRange + this.SpellObject.Width);
 
-            if (minions != null && minionsHit >= MyMenu.RootMenu.Item("lasthit.count").GetValue<Slider>().Value)
+            if (minions != null && minion.MinionsHit >= MyMenu.RootMenu.Item("lasthit.count").GetValue<Slider>().Value)
             {
                 if (!this.SpellObject.IsCharging)
                 {
@@ -195,7 +210,7 @@
 
             if (minion != null)
             {
-                this.SpellObject.Cast(minion);
+                this.SpellObject.Cast(minion.Position);
             }
         }
 

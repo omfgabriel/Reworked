@@ -16,12 +16,6 @@
     /// </summary>
     internal class SpellE : ISpell
     {
-
-        public SpellE()
-        {
-            this.SpellObject.SetSkillshot(0.25f, 250f, 1500f, false, SkillshotType.SkillshotCircle);
-        }
-
         #region Properties
 
         /// <summary>
@@ -43,7 +37,6 @@
         ///     Gets the range.
         /// </summary>
         internal override float Range => 950f;
-
 
         /// <summary>
         ///     Gets or sets the skillshot type.
@@ -93,7 +86,10 @@
                 {
                     target = targets;
                     Program.Orbwalker.ForceTarget(target);
-                    Logging.AddEntry(LoggingEntryTrype.Info, "@SpellE.cs: Target with W passive - {0}", target.ChampionName);
+                }
+                else
+                {
+                    Program.Orbwalker.ForceTarget(null);
                 }
 
                 if (target != null)
@@ -106,7 +102,7 @@
                             return;
                         }
 
-                        this.SpellObject.Cast(prediction.UnitPosition); 
+                        this.SpellObject.Cast(prediction.CastPosition); 
                     }
                 }
             }

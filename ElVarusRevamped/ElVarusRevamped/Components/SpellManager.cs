@@ -117,7 +117,7 @@
 
                 if ((orbwalkerModeLower.Equals("lasthit")
                     && (spellSlotNameLower.Equals("w")
-                        || spellSlotNameLower.Equals("r") || spellSlotNameLower.Equals("e"))) || (orbwalkerModeLower.Equals("laneclear") && (spellSlotNameLower.Equals("w") || spellSlotNameLower.Equals("r"))))
+                        || spellSlotNameLower.Equals("r") || spellSlotNameLower.Equals("e"))) || (orbwalkerModeLower.Equals("laneclear") && (spellSlotNameLower.Equals("e") || spellSlotNameLower.Equals("r"))))
                 {
                     return false;
                 }

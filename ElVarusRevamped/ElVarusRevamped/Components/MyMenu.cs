@@ -64,7 +64,6 @@
                     if (spellSlotNameLower.Equals("q", StringComparison.InvariantCultureIgnoreCase))
                     {
                         nodeCombo.AddItem(new MenuItem("comboqalways", "Always use " + spellSlotName).SetValue(true));
-                        nodeCombo.AddItem(new MenuItem("combow.count", "Minions hit Q").SetValue(new Slider(3, 1, 3)));
                     }
 
                     if (spellSlotNameLower.Equals("r", StringComparison.InvariantCultureIgnoreCase))
@@ -93,7 +92,7 @@
                     var nodeLastHit = new Menu("LastHit", spellSlotNameLower + "lasthitmenu");
                     {
                         nodeLastHit.AddItem(
-                            new MenuItem("lasthit" + spellSlotNameLower + "use", "Use " + spellSlotName).SetValue(true));
+                            new MenuItem("lasthit" + spellSlotNameLower + "use", "Use " + spellSlotName).SetValue(false));
 
                         nodeLastHit.AddItem(new MenuItem("lasthit.mode", "Q mode").SetValue(new StringList(new[] { "Always", "Out of range" }, 0)));
 

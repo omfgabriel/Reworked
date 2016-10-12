@@ -12,7 +12,7 @@
     using SharpDX;
 
     /// <summary>
-    ///     The spell Q.
+    ///     The spell E.
     /// </summary>
     internal class SpellE : ISpell
     {
@@ -81,7 +81,7 @@
                 }
 
                 var target = Misc.GetTarget(this.SpellObject.Range + this.SpellObject.Width, this.DamageType);
-                var targets = HeroManager.Enemies.FirstOrDefault(x => Misc.GetWStacks(x) > 0);
+                var targets = HeroManager.Enemies.FirstOrDefault(x => Misc.GetWStacks(x) > 0 && x.IsValidTarget(this.Range + this.SpellObject.Width) && !x.IsDead && x.IsVisible);
                 if (targets != null)
                 {
                     target = targets;
@@ -97,12 +97,7 @@
                     var prediction = this.SpellObject.GetPrediction(target);
                     if (prediction.Hitchance >= HitChance.VeryHigh)
                     {
-                        if(prediction.CastPosition.Equals(Vector3.Zero))
-                        {
-                            return;
-                        }
-
-                        this.SpellObject.Cast(prediction.CastPosition); 
+                        this.SpellObject.Cast(prediction.CastPosition);
                     }
                 }
             }
@@ -114,11 +109,11 @@
         }
 
         /// <summary>
-        ///     The on last hit callback.
+        ///     The on mixed callback.
         /// </summary>
-        internal override void OnLastHit()
+        internal override void OnMixed()
         {
-            Console.WriteLine("Last");
+            this.OnCombo();
         }
 
         /// <summary>
@@ -126,15 +121,37 @@
         /// </summary>
         internal override void OnLaneClear()
         {
-            Console.WriteLine("Last");
+            var minions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, this.SpellObject.Range + this.SpellObject.Width);
+            if (minions != null)
+            {
+                var minion = this.SpellObject.GetCircularFarmLocation(minions, this.SpellObject.Range + this.SpellObject.Width);
+                if (minion.MinionsHit >= MyMenu.RootMenu.Item("lasthit.count.e").GetValue<Slider>().Value)
+                {
+                    this.SpellObject.Cast(minion.Position);
+                }
+            }
         }
 
         /// <summary>
-        ///     The on mixed callback.
+        ///     The on jungle clear callback.
         /// </summary>
-        internal override void OnMixed()
+        internal override void OnJungleClear()
         {
-            this.OnCombo();
+            var minions = MinionManager.GetMinions(
+                ObjectManager.Player.ServerPosition,
+                this.Range,
+                MinionTypes.All,
+                MinionTeam.Neutral,
+                MinionOrderTypes.MaxHealth);
+
+            if (minions != null && MyMenu.RootMenu.Item("jungleclearusee").IsActive())
+            {
+                var minion = this.SpellObject.GetCircularFarmLocation(
+                    minions,
+                    this.SpellObject.Range + this.SpellObject.Width);
+
+                this.SpellObject.Cast(minion.Position);
+            }
         }
 
         #endregion

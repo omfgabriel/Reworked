@@ -11,6 +11,8 @@
     using LeagueSharp;
     using LeagueSharp.Common;
 
+    using SharpDX;
+
     /// <summary>
     ///     The spell manager.
     /// </summary>
@@ -44,7 +46,6 @@
 
             Game.OnUpdate += this.Game_OnUpdate;
             AntiGapcloser.OnEnemyGapcloser += this.OnEnemyGapcloser;
-            Interrupter2.OnInterruptableTarget += this.OnInterruptableTarget;
         }
 
 
@@ -56,33 +57,29 @@
         {
             try
             {
-                // do stuff    
+                var qSpell = new SpellQ();
+                if (qSpell.SpellObject.IsCharging)
+                {
+                    return;
+                }
+
+                if (MyMenu.RootMenu.Item("gapclosereuse").IsActive())
+                {
+                    var eSpell = new SpellE();
+                    if (!gapcloser.Sender.IsValidTarget(eSpell.Range))
+                    {
+                        return;
+                    }
+
+                    if (eSpell.SpellSlot.IsReady())
+                    {
+                        eSpell.SpellObject.Cast(gapcloser.Sender.Position);
+                    }
+                }
             }
             catch (Exception e)
             {
                 Logging.AddEntry(LoggingEntryTrype.Error, "@SpellManager.cs: AntiGapcloser - {0}", e);
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
-        private void OnInterruptableTarget(Obj_AI_Hero sender, Interrupter2.InterruptableTargetEventArgs args)
-        {
-            if (args.DangerLevel != Interrupter2.DangerLevel.High)
-            {
-                return;
-            }
-            try
-            {
-                // do stuff
-            }
-            catch (Exception e)
-            {
-                Logging.AddEntry(LoggingEntryTrype.Error, "@SpellManager.cs: OnInterruptableTarget - {0}", e);
                 throw;
             }
         }
@@ -117,7 +114,7 @@
 
                 if ((orbwalkerModeLower.Equals("lasthit")
                     && (spellSlotNameLower.Equals("w")
-                        || spellSlotNameLower.Equals("r") || spellSlotNameLower.Equals("e"))) || (orbwalkerModeLower.Equals("laneclear") && (spellSlotNameLower.Equals("e") || spellSlotNameLower.Equals("r"))))
+                        || spellSlotNameLower.Equals("r") || spellSlotNameLower.Equals("e"))) || (orbwalkerModeLower.Equals("laneclear") && (spellSlotNameLower.Equals("r"))))
                 {
                     return false;
                 }
@@ -165,6 +162,56 @@
                 .ForEach(spell => spell.OnMixed());
 
             this.spells.ToList().ForEach(spell => spell.OnUpdate());
+
+            this.KillstealSpells();
+        }
+
+        /// <summary>
+        ///     The killsteal method.
+        /// </summary>
+        private void KillstealSpells()
+        {
+            var spellQ = new SpellQ();
+            var spellE = new SpellE();
+
+            if (MyMenu.RootMenu.Item("killstealquse").IsActive())
+            {
+                var killableEnemy =
+                    HeroManager.Enemies.FirstOrDefault(e => spellQ.SpellObject.IsKillable(e) && e.IsValidTarget(spellQ.SpellObject.ChargedMaxRange)
+                                && ObjectManager.Player.ManaPercent
+                                > MyMenu.RootMenu.Item("killstealqmana").GetValue<Slider>().Value);
+
+                if (killableEnemy != null)
+                {
+                    if (!spellQ.SpellObject.IsCharging)
+                    {
+                        spellQ.SpellObject.StartCharging();
+                    }
+
+                    if (spellQ.SpellObject.IsCharging)
+                    {
+                        spellQ.SpellObject.Cast(killableEnemy);
+                    }
+                }
+            }
+
+            if (MyMenu.RootMenu.Item("killstealeuse").IsActive())
+            {
+                if (spellQ.SpellObject.IsCharging)
+                {
+                    return;
+                }
+
+                var killableEnemy =
+                    HeroManager.Enemies.FirstOrDefault(e => spellE.SpellObject.IsKillable(e) && e.IsValidTarget(spellE.Range + spellE.Width)
+                            && ObjectManager.Player.ManaPercent
+                            > MyMenu.RootMenu.Item("killstealemana").GetValue<Slider>().Value);
+
+                if (killableEnemy != null)
+                {
+                    spellE.SpellObject.Cast(killableEnemy.Position);
+                }
+            }
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
 ﻿namespace ElVarusRevamped.Components.Spells
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.CompilerServices;
 
@@ -103,10 +104,10 @@
                 var target = Misc.GetTarget((this.SpellObject.ChargedMaxRange + this.Width) * 1.1f, this.DamageType);
                 if (target != null)
                 {
-                    if (this.SpellObject.IsCharging || 
-                        this.SpellObject.IsKillable(target) || 
-                        target.Distance(ObjectManager.Player) > Orbwalking.GetRealAutoAttackRange(target) * 1.2f || 
-                        MyMenu.RootMenu.Item("comboqalways").IsActive() || 
+                    if (this.SpellObject.IsCharging ||
+                        this.SpellObject.IsKillable(target) ||
+                        target.Distance(ObjectManager.Player) > Orbwalking.GetRealAutoAttackRange(target) * 1.2f ||
+                        MyMenu.RootMenu.Item("comboqalways").IsActive() ||
                         Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("combow.count").GetValue<Slider>().Value)
                     {
                         if (!this.SpellObject.IsCharging)
@@ -114,14 +115,9 @@
                             this.SpellObject.StartCharging();
                         }
 
-                        if (this.SpellObject.IsCharging) 
+                        if (this.SpellObject.IsCharging)
                         {
-                            var prediction = this.SpellObject.GetPrediction(target);
-                            Logging.AddEntry(LoggingEntryTrype.Info, "@SpellQ.cs: OnCombo prediction hitchane - {0} and target {1}", prediction.Hitchance, target.ChampionName);
-                            if (prediction.Hitchance >= HitChance.High)
-                            {
-                                this.SpellObject.Cast(prediction.CastPosition);
-                            }
+                            this.SpellObject.Cast(target);
                         }
                     }
                 }
@@ -146,36 +142,51 @@
         /// </summary>
         internal override void OnLastHit()
         {
-            var minion =
-                MinionManager.GetMinions(this.SpellObject.ChargedMaxRange + this.SpellObject.Width)
-                    .Where(obj => this.SpellObject.IsKillable(obj))
-                    .MinOrDefault(obj => obj.Health);
-
-            if (minion != null)
+            if (MyMenu.RootMenu.Item("lasthit.mode").GetValue<StringList>().SelectedIndex == 0)
             {
-                if (!this.SpellObject.IsCharging)
-                {
-                    this.SpellObject.StartCharging();
-                }
+                var minion =
+                MinionManager.GetMinions(this.SpellObject.ChargedMaxRange + this.SpellObject.Width)
+                    .Where(obj => this.SpellObject.IsKillable(obj) && obj.Distance(ObjectManager.Player) > Orbwalking.GetRealAutoAttackRange(ObjectManager.Player) && obj.Distance(ObjectManager.Player) < this.SpellObject.ChargedMaxRange).MinOrDefault(obj => obj.Health);
 
-                if (this.SpellObject.IsCharging)
+                if (minion != null)
                 {
-                    if (MyMenu.RootMenu.Item("lasthit.mode").GetValue<StringList>().SelectedIndex == 0)
+                    if (!this.SpellObject.IsCharging)
+                    {
+                        this.SpellObject.StartCharging();
+                    }
+
+                    if (this.SpellObject.IsCharging)
                     {
                         this.SpellObject.Cast(minion);
                     }
-                    else
+                }
+            }
+            else
+            {
+                var allMinions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, this.Range);
+                foreach (var minion in allMinions.Where(minion => this.SpellObject.IsKillable(minion) && minion.IsValidTarget(this.SpellObject.ChargedMaxRange)))
+                {
+                    var killcount = 0;
+
+                    foreach (var colminion in allMinions)
                     {
-                        if (Vector3.Distance(minion.ServerPosition, ObjectManager.Player.ServerPosition)
-                            > Orbwalking.GetRealAutoAttackRange(ObjectManager.Player)
-                            && ObjectManager.Player.Distance(minion) <= this.SpellObject.ChargedMaxRange)
+                        if (this.SpellObject.IsKillable(colminion))
                         {
-                            this.SpellObject.Cast(minion);
+                            killcount++;
+                        }
+                        else
+                        {
+                            break;
                         }
                     }
+
+                if (killcount >= MyMenu.RootMenu.Item("lasthit.count.clear").GetValue<Slider>().Value)
+                {
+                    this.SpellObject.Cast(minion);
                 }
             }
         }
+    }
 
         /// <summary>
         ///     The on lane clear callback.
@@ -183,18 +194,20 @@
         internal override void OnLaneClear()
         {
             var minions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, this.SpellObject.ChargedMaxRange + this.SpellObject.Width);
-            var minion = this.SpellObject.GetLineFarmLocation(minions, this.SpellObject.ChargedMaxRange + this.SpellObject.Width);
-
-            if (minions != null && minion.MinionsHit >= MyMenu.RootMenu.Item("lasthit.count").GetValue<Slider>().Value)
+            if (minions != null)
             {
-                if (!this.SpellObject.IsCharging)
+                var minion = this.SpellObject.GetLineFarmLocation(minions, this.SpellObject.ChargedMaxRange + this.SpellObject.Width);
+                if (minion.MinionsHit >= MyMenu.RootMenu.Item("lasthit.count").GetValue<Slider>().Value)
                 {
-                    this.SpellObject.StartCharging();
-                }
+                    if (!this.SpellObject.IsCharging)
+                    {
+                        this.SpellObject.StartCharging();
+                    }
 
-                if (this.SpellObject.IsCharging)
-                {
-                    this.SpellObject.Cast(minion.Position);
+                    if (this.SpellObject.IsCharging)
+                    {
+                        this.SpellObject.Cast(minion.Position);
+                    }
                 }
             }
         }
@@ -204,13 +217,28 @@
         /// </summary>
         internal override void OnJungleClear()
         {
-            var minion =
-                MinionManager.GetMinions(ObjectManager.Player.ServerPosition, this.Range, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth)
-                .MinOrDefault(obj => obj.MaxHealth);
+            var minions = MinionManager.GetMinions(
+                ObjectManager.Player.ServerPosition,
+                this.Range,
+                MinionTypes.All,
+                MinionTeam.Neutral,
+                MinionOrderTypes.MaxHealth);
 
-            if (minion != null)
+            if (minions != null && MyMenu.RootMenu.Item("jungleclearuse").IsActive())
             {
-                this.SpellObject.Cast(minion.Position);
+                var minion = this.SpellObject.GetLineFarmLocation(minions, this.SpellObject.ChargedMaxRange + this.SpellObject.Width);
+                if (minion.MinionsHit >= MyMenu.RootMenu.Item("lasthit.count.jungle").GetValue<Slider>().Value)
+                {
+                    if (!this.SpellObject.IsCharging)
+                    {
+                        this.SpellObject.StartCharging();
+                    }
+
+                    if (this.SpellObject.IsCharging)
+                    {
+                        this.SpellObject.Cast(minion.Position);
+                    }
+                }
             }
         }
 

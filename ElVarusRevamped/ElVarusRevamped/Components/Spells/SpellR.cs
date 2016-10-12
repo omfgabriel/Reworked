@@ -12,7 +12,7 @@
     using SharpDX;
 
     /// <summary>
-    ///     The spell Q.
+    ///     The spell R.
     /// </summary>
     internal class SpellR : ISpell
     {
@@ -32,7 +32,7 @@
         /// <summary>
         ///     Gets the range.
         /// </summary>
-        internal override float Range => 1200f;
+        internal override float Range => 1100f;
 
         /// <summary>
         ///     Gets or sets the skillshot type.
@@ -70,6 +70,46 @@
                     return;
                 }
 
+                var spellQ = new SpellQ();
+                if (spellQ.SpellObject.IsCharging)
+                {
+                    return;
+                }
+
+                var target = Misc.GetTarget(this.SpellObject.Range + this.Width, this.DamageType);
+                if (target != null)
+                {
+                    if (MyMenu.RootMenu.Item("combousersolo").IsActive())
+                    {
+                        if (target.HealthPercent
+                            < MyMenu.RootMenu.Item("combor.count.solo").GetValue<Slider>().Value)
+                        {
+                            var enemiesCount =
+                                HeroManager.Enemies.Count(
+                                    h =>
+                                        h.IsValid && !h.IsDead && h.IsVisible && h.NetworkId != target.NetworkId
+                                        && h.Distance(
+                                            ObjectManager.Player.Position.Extend(
+                                                target.Position,
+                                                ObjectManager.Player.Distance(target) / 2f)) <= 1200);
+
+                            if (enemiesCount <= MyMenu.RootMenu.Item("combor.count.enemies").GetValue<Slider>().Value)
+                            {
+                                this.SpellObject.Cast(target);
+                            }
+                        }
+                    }
+
+                    if (MyMenu.RootMenu.Item("combousermultiple").IsActive())
+                    {
+                        var spreadRadius = MyMenu.RootMenu.Item("combor.r.radius").GetValue<Slider>().Value;
+                        var enemiesHit = HeroManager.Enemies.Where(e => e.Distance(target) <= spreadRadius && !e.IsDead && e.IsVisible).ToList();
+                        if (enemiesHit.Count >= MyMenu.RootMenu.Item("combor.count").GetValue<Slider>().Value)
+                        {
+                            this.SpellObject.Cast(target);
+                        }
+                    }
+                }
             }
             catch (Exception e)
             {

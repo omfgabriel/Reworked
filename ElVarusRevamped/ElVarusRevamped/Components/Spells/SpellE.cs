@@ -81,7 +81,8 @@
                 }
 
                 var target = Misc.GetTarget(this.SpellObject.Range + this.SpellObject.Width, this.DamageType);
-                var targets = HeroManager.Enemies.FirstOrDefault(x => Misc.GetWStacks(x) > 0 && x.IsValidTarget(this.Range + this.SpellObject.Width) && !x.IsDead && x.IsVisible);
+                var targets = HeroManager.Enemies.FirstOrDefault(x => Misc.GetWStacks(x) > 0 && x.IsValidTarget(Orbwalking.GetRealAutoAttackRange(ObjectManager.Player)) && !x.IsDead && x.IsVisible);
+
                 if (targets != null)
                 {
                     target = targets;
@@ -113,7 +114,26 @@
         /// </summary>
         internal override void OnMixed()
         {
-            this.OnCombo();
+            var spellQ = new SpellQ();
+            if (spellQ.SpellObject.IsCharging)
+            {
+                return;
+            }
+
+            var target = Misc.GetTarget(this.SpellObject.Range + this.SpellObject.Width, this.DamageType);
+            if (target != null)
+            {
+                if (this.SpellObject.IsCharging ||
+                    MyMenu.RootMenu.Item("mixedeusealways").IsActive() ||
+                    Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("mixedeusealways.count").GetValue<Slider>().Value)
+                {
+                    var prediction = this.SpellObject.GetPrediction(target);
+                    if (prediction.Hitchance >= HitChance.VeryHigh)
+                    {
+                        this.SpellObject.Cast(prediction.CastPosition);
+                    }
+                }
+            }
         }
 
         /// <summary>

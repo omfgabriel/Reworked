@@ -134,7 +134,24 @@
         /// </summary>
         internal override void OnMixed()
         {
-            this.OnCombo();
+            var target = Misc.GetTarget((this.SpellObject.ChargedMaxRange + this.Width) * 1.1f, this.DamageType);
+            if (target != null)
+            {
+                if (this.SpellObject.IsCharging ||
+                    MyMenu.RootMenu.Item("mixedqusealways").IsActive() ||
+                    Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("mixedqusealways.count").GetValue<Slider>().Value)
+                {
+                    if (!this.SpellObject.IsCharging)
+                    {
+                        this.SpellObject.StartCharging();
+                    }
+
+                    if (this.SpellObject.IsCharging)
+                    {
+                        this.SpellObject.Cast(target);
+                    }
+                }
+            }
         }
 
         /// <summary>

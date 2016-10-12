@@ -84,6 +84,7 @@
                         if (target.HealthPercent
                             < MyMenu.RootMenu.Item("combor.count.solo").GetValue<Slider>().Value)
                         {
+                            // sfx
                             var enemiesCount =
                                 HeroManager.Enemies.Count(
                                     h =>
@@ -91,7 +92,7 @@
                                         && h.Distance(
                                             ObjectManager.Player.Position.Extend(
                                                 target.Position,
-                                                ObjectManager.Player.Distance(target) / 2f)) <= 1200);
+                                                ObjectManager.Player.Distance(target) / 2f)) <= 2000);
 
                             if (enemiesCount <= MyMenu.RootMenu.Item("combor.count.enemies").GetValue<Slider>().Value)
                             {
@@ -103,7 +104,8 @@
                     if (MyMenu.RootMenu.Item("combousermultiple").IsActive())
                     {
                         var spreadRadius = MyMenu.RootMenu.Item("combor.r.radius").GetValue<Slider>().Value;
-                        var enemiesHit = HeroManager.Enemies.Where(e => e.Distance(target) <= spreadRadius && !e.IsDead && e.IsVisible).ToList();
+                        var enemiesHit = HeroManager.Enemies.Where(e => e.Distance(target) <= spreadRadius && !e.IsDead).ToList();
+                        Logging.AddEntry(LoggingEntryTrype.Debug, "Can hit {0} targets from {1} range with a spread radius of {2}", enemiesHit.Count, target.ChampionName, spreadRadius);
                         if (enemiesHit.Count >= MyMenu.RootMenu.Item("combor.count").GetValue<Slider>().Value)
                         {
                             this.SpellObject.Cast(target);

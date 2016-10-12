@@ -112,9 +112,11 @@
                 var orbwalkerModeLower = Program.Orbwalker.ActiveMode.ToString().ToLower();
                 var spellSlotNameLower = spellSlot.ToString().ToLower();
 
+                // Fixing this later
                 if ((orbwalkerModeLower.Equals("lasthit")
                     && (spellSlotNameLower.Equals("w")
-                        || spellSlotNameLower.Equals("r") || spellSlotNameLower.Equals("e"))) || (orbwalkerModeLower.Equals("laneclear") && (spellSlotNameLower.Equals("r"))))
+                        || spellSlotNameLower.Equals("r") || spellSlotNameLower.Equals("e"))) || (orbwalkerModeLower.Equals("laneclear") && (spellSlotNameLower.Equals("r")))
+                        || (orbwalkerModeLower.Equals("mixed") && (spellSlotNameLower.Equals("r"))))
                 {
                     return false;
                 }
@@ -162,12 +164,11 @@
                 .ForEach(spell => spell.OnMixed());
 
             this.spells.ToList().ForEach(spell => spell.OnUpdate());
-
-            this.KillstealSpells();
         }
 
         /// <summary>
         ///     The killsteal method.
+        ///     Disabled for now, need to fix stuff first.
         /// </summary>
         private void KillstealSpells()
         {

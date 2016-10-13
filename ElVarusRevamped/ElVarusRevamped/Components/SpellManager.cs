@@ -164,21 +164,23 @@
                 .ForEach(spell => spell.OnMixed());
 
             this.spells.ToList().ForEach(spell => spell.OnUpdate());
+
+            this.Killsteal();
         }
 
         /// <summary>
         ///     The killsteal method.
         ///     Disabled for now, need to fix stuff first.
         /// </summary>
-        private void KillstealSpells()
+        private void Killsteal()
         {
             var spellQ = new SpellQ();
             var spellE = new SpellE();
 
-            if (MyMenu.RootMenu.Item("killstealquse").IsActive())
+            if (MyMenu.RootMenu.Item("killstealquse").IsActive() && spellQ.SpellSlot.IsReady())
             {
                 var killableEnemy =
-                    HeroManager.Enemies.FirstOrDefault(e => spellQ.SpellObject.IsKillable(e) && e.IsValidTarget(spellQ.SpellObject.ChargedMaxRange)
+                    HeroManager.Enemies.FirstOrDefault(e => spellQ.SpellObject.IsKillable(e) && !Orbwalking.InAutoAttackRange(e) && e.IsValidTarget(spellQ.SpellObject.ChargedMaxRange)
                                 && ObjectManager.Player.ManaPercent
                                 > MyMenu.RootMenu.Item("killstealqmana").GetValue<Slider>().Value);
 
@@ -196,7 +198,7 @@
                 }
             }
 
-            if (MyMenu.RootMenu.Item("killstealeuse").IsActive())
+            if (MyMenu.RootMenu.Item("killstealeuse").IsActive() && spellE.SpellSlot.IsReady())
             {
                 if (spellQ.SpellObject.IsCharging)
                 {
@@ -204,7 +206,7 @@
                 }
 
                 var killableEnemy =
-                    HeroManager.Enemies.FirstOrDefault(e => spellE.SpellObject.IsKillable(e) && e.IsValidTarget(spellE.Range + spellE.Width)
+                    HeroManager.Enemies.FirstOrDefault(e => spellE.SpellObject.IsKillable(e) && !Orbwalking.InAutoAttackRange(e) && e.IsValidTarget(spellE.Range + spellE.Width)
                             && ObjectManager.Player.ManaPercent
                             > MyMenu.RootMenu.Item("killstealemana").GetValue<Slider>().Value);
 

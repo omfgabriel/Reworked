@@ -63,15 +63,10 @@
                     return;
                 }
 
-                if (MyMenu.RootMenu.Item("gapclosereuse").IsActive())
+                var eSpell = new SpellE();
+                if (MyMenu.RootMenu.Item("gapclosereuse").IsActive() && eSpell.SpellSlot.IsReady())
                 {
-                    var eSpell = new SpellE();
-                    if (!gapcloser.Sender.IsValidTarget(eSpell.Range))
-                    {
-                        return;
-                    }
-
-                    if (eSpell.SpellSlot.IsReady())
+                    if (gapcloser.End.Distance(ObjectManager.Player.Position) <= eSpell.Range)
                     {
                         eSpell.SpellObject.Cast(gapcloser.End);
                     }
@@ -106,13 +101,11 @@
             {
                 return false;
             }
-
             try
             {
                 var orbwalkerModeLower = Program.Orbwalker.ActiveMode.ToString().ToLower();
                 var spellSlotNameLower = spellSlot.ToString().ToLower();
 
-                // Fixing this later
                 if ((orbwalkerModeLower.Equals("lasthit")
                     && (spellSlotNameLower.Equals("w")
                         || spellSlotNameLower.Equals("r") || spellSlotNameLower.Equals("e"))) || (orbwalkerModeLower.Equals("laneclear") && (spellSlotNameLower.Equals("r")))
@@ -141,19 +134,19 @@
         /// </param>
         private void Game_OnUpdate(EventArgs args)
         {
-            if (ObjectManager.Player.IsDead || MenuGUI.IsChatOpen || MenuGUI.IsShopOpen) return;
+            if (ObjectManager.Player.IsDead || MenuGUI.IsChatOpen || MenuGUI.IsShopOpen || Program.Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.None) return;
 
             this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.Combo))
                 .ToList()
                 .ForEach(spell => spell.OnCombo());
 
             this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.LaneClear))
-                .ToList()
-                .ForEach(spell => spell.OnLaneClear());
+              .ToList()
+              .ForEach(spell => spell.OnLaneClear());
 
             this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.LaneClear))
-               .ToList()
-               .ForEach(spell => spell.OnJungleClear());
+                .ToList()
+                .ForEach(spell => spell.OnJungleClear());
 
             this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.LastHit))
                 .ToList()
@@ -162,57 +155,6 @@
             this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.Mixed))
                 .ToList()
                 .ForEach(spell => spell.OnMixed());
-
-            this.spells.ToList().ForEach(spell => spell.OnUpdate());
-        }
-
-        /// <summary>
-        ///     The killsteal method.
-        ///     Disabled for now, need to fix stuff first.
-        /// </summary>
-        private void Killsteal()
-        {
-            var spellQ = new SpellQ();
-            var spellE = new SpellE();
-
-            if (MyMenu.RootMenu.Item("killstealquse").IsActive() && spellQ.SpellSlot.IsReady())
-            {
-                var killableEnemy =
-                    HeroManager.Enemies.FirstOrDefault(e => spellQ.SpellObject.IsKillable(e) && !Orbwalking.InAutoAttackRange(e) && e.IsValidTarget(spellQ.SpellObject.ChargedMaxRange)
-                                && ObjectManager.Player.ManaPercent
-                                > MyMenu.RootMenu.Item("killstealqmana").GetValue<Slider>().Value);
-
-                if (killableEnemy != null)
-                {
-                    if (!spellQ.SpellObject.IsCharging)
-                    {
-                        spellQ.SpellObject.StartCharging();
-                    }
-
-                    if (spellQ.SpellObject.IsCharging)
-                    {
-                        spellQ.SpellObject.Cast(killableEnemy);
-                    }
-                }
-            }
-
-            if (MyMenu.RootMenu.Item("killstealeuse").IsActive() && spellE.SpellSlot.IsReady())
-            {
-                if (spellQ.SpellObject.IsCharging)
-                {
-                    return;
-                }
-
-                var killableEnemy =
-                    HeroManager.Enemies.FirstOrDefault(e => spellE.SpellObject.IsKillable(e) && !Orbwalking.InAutoAttackRange(e) && e.IsValidTarget(spellE.Range + spellE.Width)
-                            && ObjectManager.Player.ManaPercent
-                            > MyMenu.RootMenu.Item("killstealemana").GetValue<Slider>().Value);
-
-                if (killableEnemy != null)
-                {
-                    spellE.SpellObject.Cast(killableEnemy.Position);
-                }
-            }
         }
 
         /// <summary>

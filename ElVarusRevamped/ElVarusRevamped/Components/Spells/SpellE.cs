@@ -145,9 +145,13 @@
             if (minions != null)
             {
                 var minion = this.SpellObject.GetCircularFarmLocation(minions, this.SpellObject.Range + this.SpellObject.Width);
+                
                 if (minion.MinionsHit >= MyMenu.RootMenu.Item("lasthit.count.e").GetValue<Slider>().Value)
                 {
-                    this.SpellObject.Cast(minion.Position);
+                    if (minion.Position.IsValid())
+                    {
+                        this.SpellObject.Cast(minion.Position);
+                    }
                 }
             }
         }
@@ -170,7 +174,10 @@
                     minions,
                     this.SpellObject.Range + this.SpellObject.Width);
 
-                this.SpellObject.Cast(minion.Position);
+                if (minion.Position.IsValid())
+                {
+                    this.SpellObject.Cast(minion.Position);
+                }
             }
         }
 

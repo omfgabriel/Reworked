@@ -104,7 +104,7 @@
                 var target = Misc.GetTarget((this.SpellObject.ChargedMaxRange + this.Width) * 1.1f, this.DamageType);
                 if (target != null)
                 {
-                    if (this.SpellObject.IsCharging ||
+                   if (this.SpellObject.IsCharging ||
                         this.SpellObject.IsKillable(target) ||
                         target.Distance(ObjectManager.Player) > Orbwalking.GetRealAutoAttackRange(target) * 1.2f ||
                         MyMenu.RootMenu.Item("comboqalways").IsActive() ||
@@ -227,14 +227,17 @@
                 var minion = this.SpellObject.GetLineFarmLocation(minions, this.SpellObject.ChargedMaxRange + this.SpellObject.Width);
                 if (minion.MinionsHit >= MyMenu.RootMenu.Item("lasthit.count").GetValue<Slider>().Value)
                 {
-                    if (!this.SpellObject.IsCharging)
+                    if (minion.Position.IsValid())
                     {
-                        this.SpellObject.StartCharging();
-                    }
+                        if (!this.SpellObject.IsCharging)
+                        {
+                            this.SpellObject.StartCharging();
+                        }
 
-                    if (this.SpellObject.IsCharging)
-                    {
-                        this.SpellObject.Cast(minion.Position);
+                        if (this.SpellObject.IsCharging)
+                        {
+                            this.SpellObject.Cast(minion.Position);
+                        }
                     }
                 }
             }
@@ -257,14 +260,17 @@
                 var minion = this.SpellObject.GetLineFarmLocation(minions, this.SpellObject.ChargedMaxRange + this.SpellObject.Width);
                 if (minion.MinionsHit >= MyMenu.RootMenu.Item("lasthit.count.jungle").GetValue<Slider>().Value)
                 {
-                    if (!this.SpellObject.IsCharging)
+                    if (minion.Position.IsValid())
                     {
-                        this.SpellObject.StartCharging();
-                    }
+                        if (!this.SpellObject.IsCharging)
+                        {
+                            this.SpellObject.StartCharging();
+                        }
 
-                    if (this.SpellObject.IsCharging)
-                    {
-                        this.SpellObject.Cast(minion.Position);
+                        if (this.SpellObject.IsCharging)
+                        {
+                            this.SpellObject.Cast(minion.Position);
+                        }
                     }
                 }
             }

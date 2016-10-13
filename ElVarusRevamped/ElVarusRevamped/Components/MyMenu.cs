@@ -66,9 +66,17 @@
 
                     if (spellSlotNameLower.Equals("q", StringComparison.InvariantCultureIgnoreCase))
                     {
+                        nodeCombo.AddItem(new MenuItem("forceqalways", "Force target with W stacks").SetValue(true));
                         nodeCombo.AddItem(new MenuItem("comboqalways", "Always use " + spellSlotName).SetValue(true));
                         nodeCombo.AddItem(new MenuItem("combow.count", "Minimum W stacks").SetValue(new Slider(3, 1, 3)));
                         nodeCombo.AddItem(new MenuItem("comboq.fast", "Fast Q min health").SetValue(new Slider(20)));
+                    }
+
+                    if (spellSlotNameLower.Equals("e", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        nodeCombo.AddItem(new MenuItem("comboealways", "Always use " + spellSlotName).SetValue(true));
+                        nodeCombo.AddItem(new MenuItem("comboew.count", "Minimum W stacks").SetValue(new Slider(3, 1, 3)));
+                        nodeCombo.AddItem(new MenuItem("comboe.count.hit", "Enemies hit").SetValue(new Slider(2, 1, 5)));
                     }
 
                     if (spellSlotNameLower.Equals("r", StringComparison.InvariantCultureIgnoreCase))

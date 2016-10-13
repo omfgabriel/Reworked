@@ -136,6 +136,21 @@
         {
             if (ObjectManager.Player.IsDead || MenuGUI.IsChatOpen || MenuGUI.IsShopOpen || Program.Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.None) return;
 
+            if (MyMenu.RootMenu.Item("forceqalways").IsActive())
+            {
+                var target = HeroManager.Enemies.FirstOrDefault(x => Misc.GetWStacks(x) > 0 && x.IsValidTarget(Orbwalking.GetRealAutoAttackRange(ObjectManager.Player) + 150) && !x.IsDead && x.IsVisible);
+                if (target != null)
+                {
+                    Program.Orbwalker.ForceTarget(target);
+                    Logging.AddEntry(LoggingEntryTrype.Debug, "@SpellManager: Forced target: {0}", target.ChampionName);
+                }
+                else
+                {
+                    Program.Orbwalker.ForceTarget(null);
+                    Logging.AddEntry(LoggingEntryTrype.Debug, "@SpellManager: No target forced");
+                }
+            }
+
             this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.Combo))
                 .ToList()
                 .ForEach(spell => spell.OnCombo());

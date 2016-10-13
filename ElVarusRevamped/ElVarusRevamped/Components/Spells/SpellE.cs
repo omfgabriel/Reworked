@@ -80,25 +80,15 @@
                     return;
                 }
 
-                var target = Misc.GetTarget(this.SpellObject.Range + this.SpellObject.Width, this.DamageType);
-                var targets = HeroManager.Enemies.FirstOrDefault(x => Misc.GetWStacks(x) > 0 && x.IsValidTarget(Orbwalking.GetRealAutoAttackRange(ObjectManager.Player)) && !x.IsDead && x.IsVisible);
-
-                if (targets != null)
-                {
-                    target = targets;
-                    Program.Orbwalker.ForceTarget(target);
-                }
-                else
-                {
-                    Program.Orbwalker.ForceTarget(null);
-                }
-
+                var target = Misc.GetTarget(this.Range + this.Width, this.DamageType);
                 if (target != null)
                 {
-                    var prediction = this.SpellObject.GetPrediction(target);
-                    if (prediction.Hitchance >= HitChance.VeryHigh)
+                    if (MyMenu.RootMenu.Item("comboealways").IsActive() || 
+                        this.SpellObject.IsKillable(target) || 
+                        Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("comboew.count").GetValue<Slider>().Value || 
+                        (HeroManager.Enemies.Count(x => x.IsValidTarget(this.Range + this.Width)) >= MyMenu.RootMenu.Item("comboe.count.hit").GetValue<Slider>().Value))
                     {
-                        this.SpellObject.Cast(prediction.CastPosition);
+                        this.SpellObject.Cast(target, aoe: true);
                     }
                 }
             }
@@ -120,7 +110,7 @@
                 return;
             }
 
-            var target = Misc.GetTarget(this.SpellObject.Range + this.SpellObject.Width, this.DamageType);
+            var target = Misc.GetTarget(this.Range + this.Width, this.DamageType);
             if (target != null)
             {
                 if (this.SpellObject.IsCharging ||
@@ -141,10 +131,10 @@
         /// </summary>
         internal override void OnLaneClear()
         {
-            var minions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, this.SpellObject.Range + this.SpellObject.Width);
+            var minions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, this.Range + this.Width);
             if (minions != null)
             {
-                var minion = this.SpellObject.GetCircularFarmLocation(minions, this.SpellObject.Range + this.SpellObject.Width);
+                var minion = this.SpellObject.GetCircularFarmLocation(minions, this.Range + this.Width);
                 
                 if (minion.MinionsHit >= MyMenu.RootMenu.Item("lasthit.count.e").GetValue<Slider>().Value)
                 {
@@ -172,7 +162,7 @@
             {
                 var minion = this.SpellObject.GetCircularFarmLocation(
                     minions,
-                    this.SpellObject.Range + this.SpellObject.Width);
+                    this.Range + this.Width);
 
                 if (minion.Position.IsValid())
                 {

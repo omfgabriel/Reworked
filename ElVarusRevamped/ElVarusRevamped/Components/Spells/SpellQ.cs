@@ -108,7 +108,7 @@
                         this.SpellObject.IsKillable(target) ||
                         target.Distance(ObjectManager.Player) > Orbwalking.GetRealAutoAttackRange(target) * 1.2f ||
                         MyMenu.RootMenu.Item("comboqalways").IsActive() ||
-                        Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("combow.count").GetValue<Slider>().Value)
+                        (Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("combow.count").GetValue<Slider>().Value))
                     {
                         if (!this.SpellObject.IsCharging)
                         {

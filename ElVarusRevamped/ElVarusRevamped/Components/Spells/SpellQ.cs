@@ -120,6 +120,17 @@
                             this.SpellObject.Cast(target);
                         }
                     }
+
+                    if (ObjectManager.Player.HealthPercent
+                        <= MyMenu.RootMenu.Item("comboq.fast").GetValue<Slider>().Value)
+                    {
+                        if (!this.SpellObject.IsCharging)
+                        {
+                            this.SpellObject.StartCharging();
+                        }
+
+                        this.SpellObject.Cast(target);
+                    }
                 }
             }
             catch (Exception e)

@@ -68,6 +68,7 @@
                     {
                         nodeCombo.AddItem(new MenuItem("comboqalways", "Always use " + spellSlotName).SetValue(true));
                         nodeCombo.AddItem(new MenuItem("combow.count", "Minimum W stacks").SetValue(new Slider(3, 1, 3)));
+                        nodeCombo.AddItem(new MenuItem("comboq.fast", "Fast Q min health").SetValue(new Slider(20)));
                     }
 
                     if (spellSlotNameLower.Equals("r", StringComparison.InvariantCultureIgnoreCase))

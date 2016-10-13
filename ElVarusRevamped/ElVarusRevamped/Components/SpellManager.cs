@@ -73,7 +73,7 @@
 
                     if (eSpell.SpellSlot.IsReady())
                     {
-                        eSpell.SpellObject.Cast(gapcloser.Sender.Position);
+                        eSpell.SpellObject.Cast(gapcloser.End);
                     }
                 }
             }

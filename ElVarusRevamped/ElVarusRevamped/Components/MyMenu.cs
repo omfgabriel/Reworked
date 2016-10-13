@@ -145,17 +145,17 @@
                     node.AddSubMenu(nodeLaneClear);
                 }
 
-                if (!spellSlotNameLower.Equals("r", StringComparison.InvariantCultureIgnoreCase))
+                if (spellSlotNameLower.Equals("e", StringComparison.InvariantCultureIgnoreCase))
                 {
                     var nodeMisc = new Menu("Miscellaneous", spellSlotNameLower + "miscmenu");
                     {
-                        nodeMisc.AddItem(new MenuItem("killsteal" + spellSlotNameLower + "use", "Use " + spellSlotName + " to killsteal").SetValue(false));
-                        nodeMisc.AddItem(new MenuItem("killsteal" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(5)));
-
-                        if (spellSlotNameLower.Equals("e", StringComparison.InvariantCultureIgnoreCase))
+                        //nodeMisc.AddItem(new MenuItem("killsteal" + spellSlotNameLower + "use", "Use " + spellSlotName + " to killsteal").SetValue(false));
+                        //nodeMisc.AddItem(new MenuItem("killsteal" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(5)));
+                        nodeMisc.AddItem(new MenuItem("gapclosereuse", "Use " + spellSlotName + " for gapclosers").SetValue(true));
+                        /*if (spellSlotNameLower.Equals("e", StringComparison.InvariantCultureIgnoreCase))
                         {
                             nodeMisc.AddItem(new MenuItem("gapclosereuse", "Use " + spellSlotName + " for gapclosers").SetValue(true));
-                        }
+                        }*/
                     }
 
                     node.AddSubMenu(nodeMisc);

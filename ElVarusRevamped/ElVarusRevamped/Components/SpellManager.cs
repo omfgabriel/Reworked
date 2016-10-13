@@ -164,8 +164,6 @@
                 .ForEach(spell => spell.OnMixed());
 
             this.spells.ToList().ForEach(spell => spell.OnUpdate());
-
-            this.Killsteal();
         }
 
         /// <summary>

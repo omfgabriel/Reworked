@@ -76,7 +76,7 @@
                     return;
                 }
 
-                var target = Misc.GetTarget(this.SpellObject.Range + this.Width, this.DamageType);
+                var target = Misc.GetTarget(this.Range + this.Width, this.DamageType);
                 if (target != null)
                 {
                     if (MyMenu.RootMenu.Item("combousersolo").IsActive())

@@ -101,7 +101,7 @@
                     return;
                 }
 
-                var target = Misc.GetTarget((this.SpellObject.ChargedMaxRange + this.Width) * 1.1f, this.DamageType);
+                var target = Misc.GetTarget((this.MaxRange + this.Width) * 1.1f, this.DamageType);
                 if (target != null)
                 {
                    if (this.SpellObject.IsCharging ||
@@ -145,7 +145,7 @@
         /// </summary>
         internal override void OnMixed()
         {
-            var target = Misc.GetTarget((this.SpellObject.ChargedMaxRange + this.Width) * 1.1f, this.DamageType);
+            var target = Misc.GetTarget((this.MaxRange + this.Width) * 1.1f, this.DamageType);
             if (target != null)
             {
                 if (this.SpellObject.IsCharging ||
@@ -173,7 +173,7 @@
             if (MyMenu.RootMenu.Item("lasthit.mode").GetValue<StringList>().SelectedIndex == 0)
             {
                 var minion =
-                MinionManager.GetMinions(this.SpellObject.ChargedMaxRange + this.SpellObject.Width)
+                MinionManager.GetMinions(this.MaxRange + this.Width)
                     .Where(obj => this.SpellObject.IsKillable(obj) && obj.Distance(ObjectManager.Player) > Orbwalking.GetRealAutoAttackRange(ObjectManager.Player) && obj.Distance(ObjectManager.Player) < this.SpellObject.ChargedMaxRange).MinOrDefault(obj => obj.Health);
 
                 if (minion != null)
@@ -192,7 +192,7 @@
             else
             {
                 var allMinions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, this.Range);
-                foreach (var minion in allMinions.Where(minion => this.SpellObject.IsKillable(minion) && minion.IsValidTarget(this.SpellObject.ChargedMaxRange)))
+                foreach (var minion in allMinions.Where(minion => this.SpellObject.IsKillable(minion) && minion.IsValidTarget(this.MaxRange)))
                 {
                     var killcount = 0;
 
@@ -221,10 +221,10 @@
         /// </summary>
         internal override void OnLaneClear()
         {
-            var minions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, this.SpellObject.ChargedMaxRange + this.SpellObject.Width);
+            var minions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, this.MaxRange + this.Width);
             if (minions != null)
             {
-                var minion = this.SpellObject.GetLineFarmLocation(minions, this.SpellObject.ChargedMaxRange + this.SpellObject.Width);
+                var minion = this.SpellObject.GetLineFarmLocation(minions, this.MaxRange + this.Width);
                 if (minion.MinionsHit >= MyMenu.RootMenu.Item("lasthit.count").GetValue<Slider>().Value)
                 {
                     if (minion.Position.IsValid())
@@ -257,7 +257,7 @@
 
             if (minions != null && MyMenu.RootMenu.Item("jungleclearuse").IsActive())
             {
-                var minion = this.SpellObject.GetLineFarmLocation(minions, this.SpellObject.ChargedMaxRange + this.SpellObject.Width);
+                var minion = this.SpellObject.GetLineFarmLocation(minions, this.MaxRange + this.Width);
                 if (minion.MinionsHit >= MyMenu.RootMenu.Item("lasthit.count.jungle").GetValue<Slider>().Value)
                 {
                     if (minion.Position.IsValid())

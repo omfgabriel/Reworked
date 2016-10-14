@@ -82,7 +82,10 @@
                     // todo : Move this code to the right place.
                     // todo : Check for Elise spiderlings etc, do not eat them while chasing enemy.
                     // Get the minions in range when the target is out of autoattackrange + a little bit.
-                    var minion = MinionManager.GetMinions(this.Range).MinOrDefault(obj => obj.Health);
+                    var minion =
+                        MinionManager.GetMinions(this.Range, team: MinionTeam.NotAlly)
+                            .OrderBy(obj => obj.Distance(ObjectManager.Player.ServerPosition))
+                            .FirstOrDefault();
                     // check if there are any minions.
                     if (minion != null)
                     {

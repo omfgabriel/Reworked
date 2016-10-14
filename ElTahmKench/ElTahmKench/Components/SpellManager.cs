@@ -102,20 +102,29 @@
         /// <param name="args">The <see cref="GameObjectProcessSpellCastEventArgs" /> instance containing the event data.</param>
         private void ObjAiBaseOnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
-
             if (!sender.IsEnemy)
             {
                 return;
             }
-            // todo : Check if player is in range of ally.
-            // todo : Generate menu items to toggle spells [optional].
 
-            if(!this.Spells.Any(x => x.SpellName.Equals(args.SData.Name, StringComparison.InvariantCultureIgnoreCase)))
+            if (args.Target.IsEnemy || !args.Target.IsValid<Obj_AI_Hero>())
             {
                 return;
             }
 
-            // todo : Cast W on ally.
+            // todo : Generate menu items to toggle spells [optional].
+            if (!this.Spells.Any(x => x.SpellName.Equals(args.SData.Name, StringComparison.InvariantCultureIgnoreCase)))
+            {
+                return;
+            }
+
+            var target = (Obj_AI_Hero)args.Target;
+            var spellW = new SpellW();
+
+            if (spellW.SpellSlot.IsReady() && ObjectManager.Player.Distance(target) < spellW.Range)
+            {
+                spellW.SpellObject.CastOnUnit(target);
+            }
         }
 
         /// <summary>

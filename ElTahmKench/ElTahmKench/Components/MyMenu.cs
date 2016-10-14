@@ -1,6 +1,8 @@
 ﻿namespace ElTahmKench.Components
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     using ElTahmKench.Enumerations;
     using ElTahmKench.Utils;
@@ -13,6 +15,13 @@
     /// </summary>
     internal class MyMenu
     {
+
+        /// <summary>
+        ///     List with default activated spells.
+        /// </summary>
+        public static readonly List<string> TrueStandard = new List<string> { "Stun", "Charm", "Flee", "Fear", "Taunt", "Polymorph", "Suppression" };
+                   
+
         #region Constructors and Destructors
 
         /// <summary>
@@ -60,17 +69,55 @@
                 {
                     nodeCombo.AddItem(new MenuItem("combo" + spellSlotNameLower + "use", "Use " + spellSlotName).SetValue(true));
                     nodeCombo.AddItem(new MenuItem("combo" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(5)));
+
+                    if (spellSlotNameLower.Equals("w", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        nodeCombo.AddItem(new MenuItem("combominionuse", "Eat minion").SetValue(false));
+                    }
                 }
 
                 node.AddSubMenu(nodeCombo);
 
-                var nodeMixed = new Menu("Mixed", spellSlotNameLower + "mixedmenu");
+                if (!spellSlotNameLower.Equals("e", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    nodeMixed.AddItem(new MenuItem("mixed" + spellSlotNameLower + "use", "Use " + spellSlotName).SetValue(true));
-                    nodeMixed.AddItem(new MenuItem("mixed" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(50)));
+
+                    var nodeMixed = new Menu("Mixed", spellSlotNameLower + "mixedmenu");
+                    {
+                        nodeMixed.AddItem(
+                            new MenuItem("mixed" + spellSlotNameLower + "use", "Use " + spellSlotName).SetValue(true));
+                        nodeMixed.AddItem(
+                            new MenuItem("mixed" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(50)));
+                    }
+
+                    node.AddSubMenu(nodeMixed);
                 }
 
-                node.AddSubMenu(nodeMixed);
+
+                if (spellSlotNameLower.Equals("w", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    var nodeAlly = new Menu("Ally settings", spellSlotNameLower + "allymenu");
+                    {
+                        nodeAlly.AddItem(new MenuItem("allydangerousults", "Use " + spellSlotName + " on dangerous ults").SetValue(true));
+
+                        nodeAlly.AddItem(new MenuItem("allycc", "Use " + spellSlotName + " when ally is cc'd").SetValue(true));
+
+                        foreach (var buffType in Misc.DevourerBuffTypes.Select(x => x.ToString()))
+                        {
+                            nodeAlly.SubMenu("Buff Types").AddItem(new MenuItem($"buffscc{buffType}", buffType).SetValue(TrueStandard.Contains($"{buffType}")));
+                        }
+
+                        nodeAlly.AddItem(new MenuItem("sep3-0", String.Empty));
+
+                        foreach (var allies in HeroManager.Allies.Where(a => !a.IsMe))
+                        {
+                            nodeAlly.AddItem(new MenuItem($"won{allies.ChampionName}", "Use on " + allies.ChampionName))
+                                .SetValue(true);
+                        }
+                    }
+
+
+                    node.AddSubMenu(nodeAlly);
+                }
 
                 if (spellSlotNameLower.Equals("q", StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -83,18 +130,6 @@
                     }
 
                     node.AddSubMenu(nodeLastHit);
-                }
-
-                if (!spellSlotNameLower.Equals("e", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    var nodeLaneClear = new Menu("Clear", spellSlotNameLower + "laneclearmenu");
-                    {
-                        nodeLaneClear.AddItem(new MenuItem("laneclear" + spellSlotNameLower + "use", "Use " + spellSlotName).SetValue(true));
-                        nodeLaneClear.AddItem(new MenuItem("laneclear" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(50)));
-
-                    }
-
-                    node.AddSubMenu(nodeLaneClear);
                 }
 
                 RootMenu.AddSubMenu(node);

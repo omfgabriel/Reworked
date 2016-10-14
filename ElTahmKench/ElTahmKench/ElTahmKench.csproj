@@ -40,7 +40,7 @@
     </Reference>
     <Reference Include="LeagueSharp.Data, Version=1.1.0.1, Culture=neutral, PublicKeyToken=7b6e8d26eaf0534f, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\2bScOWoCt\References\LeagueSharp.Data.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\2bScOWoCt\References\LeagueSharp.Data.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX">
       <HintPath>C:\Program Files (x86)\2bScOWoCt\References\SharpDX.dll</HintPath>

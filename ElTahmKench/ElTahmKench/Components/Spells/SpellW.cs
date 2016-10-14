@@ -18,6 +18,16 @@
     {
         #region Properties
 
+        public float minionWRange = 700f;
+
+        /// <summary>
+        ///     Gets a value indicating whether the combo mode is active.
+        /// </summary>
+        /// <value>
+        ///     <c>true</c> if combo mode is active; otherwise, <c>false</c>.
+        /// </value>
+        public bool ComboModeActive => Orbwalking.Orbwalker.Instances.Any(x => x.ActiveMode == Orbwalking.OrbwalkingMode.Combo);
+
         /// <summary>
         ///     Gets or sets the damage type.
         /// </summary>
@@ -26,12 +36,12 @@
         /// <summary>
         ///     Gets the delay.
         /// </summary>
-        internal override float Delay => 0f;
+        internal override float Delay => 0.5f;
 
         /// <summary>
         ///     Gets the range.
         /// </summary>
-        internal override float Range => 250f;
+        internal override float Range => Misc.HasDevouredBuff && Misc.LastDevouredType == DevourType.Minion ? 700f : 250f;
 
         /// <summary>
         ///     Gets or sets the skillshot type.
@@ -41,7 +51,7 @@
         /// <summary>
         ///     Gets the speed.
         /// </summary>
-        internal override float Speed => 0f;
+        internal override float Speed => 950f;
 
         /// <summary>
         ///     Gets the spell slot.
@@ -51,7 +61,12 @@
         /// <summary>
         ///     Gets the width.
         /// </summary>
-        internal override float Width => 0f;
+        internal override float Width => 75f;
+
+        /// <summary>
+        ///     Spell has collision.
+        /// </summary>
+        internal override bool Collision => true;
 
         #endregion
 
@@ -64,45 +79,45 @@
         {
             try
             {
-                if (this.SpellObject == null)
-                {
-                    return;
-                }
-
-                // todo: Adjust Range 250 to devourer and x spit range.
                 var target = Misc.GetTarget(this.Range, this.DamageType);
                 if (target != null)
                 {
-                    // todo : If the range is a little bit bigger then the attack range, option to force orbwalker to walk to target.
-                    if (Misc.GetPassiveStacks(target) == 3 && Orbwalking.InAutoAttackRange(target))
+                    if (Misc.GetPassiveStacks(target) == 3 && ObjectManager.Player.Distance(target) <= this.Range)
                     {
-                        this.SpellObject.CastOnUnit(target);
-                    }
-
-                    // todo : Move this code to the right place.
-                    // todo : Check for Elise spiderlings etc, do not eat them while chasing enemy.
-                    // Get the minions in range when the target is out of autoattackrange + a little bit.
-                    var minion =
-                        MinionManager.GetMinions(this.Range, team: MinionTeam.NotAlly)
-                            .OrderBy(obj => obj.Distance(ObjectManager.Player.ServerPosition))
-                            .FirstOrDefault();
-                    // check if there are any minions.
-                    if (minion != null)
-                    {
-                        // Cast W on the minion
-                        // todo: OnbuffAdd set to Misc.LastDevouredType = DevourType.Minion.
-                        this.SpellObject.CastOnUnit(minion);
-                        // Check if there is indeed a minion eaten.
-                        if (Misc.HasDevouredBuff) // Maybe this should be a little different after OnBuffAdd/OnBuffRemove
+                        if (target.IsValidTarget(this.Range))
                         {
-                            // todo : Prediction options.
-                            // Spit the minion to the target location.
-                            this.SpellObject.Cast(target);
+                            this.SpellObject.CastOnUnit(target);
                         }
                     }
                     else
                     {
-                        Logging.AddEntry(LoggingEntryType.Debug, "@SpellW.cs: There is no minion in range");
+                        // test
+                        if (MyMenu.RootMenu.Item("combominionuse").IsActive())
+                        {
+                            if (!target.IsValidTarget(this.Range + 400) || Misc.HasDevouredBuff) // 650
+                            {
+                                return;
+                            }
+
+                            // Get the minions in range
+                            var minion = MinionManager.GetMinions(this.Range, team: MinionTeam.NotAlly).Where(n => !n.CharData.Name.ToLower().Contains("spiderling")).OrderBy(obj => obj.Distance(ObjectManager.Player.ServerPosition)).FirstOrDefault();
+                            // check if there are any minions.
+                            if (minion != null)
+                            {
+                                // Cast W on the minion.
+                                this.SpellObject.CastOnUnit(minion);
+                                // Check if player has the devoured buff and that the last devoured type is a minion.
+                                if (Misc.HasDevouredBuff && Misc.LastDevouredType == DevourType.Minion)
+                                {
+                                    var prediction = this.SpellObject.GetPrediction(target);
+                                    if (prediction.Hitchance >= HitChance.High)
+                                    {
+                                        // Spit the minion to the target location.
+                                        this.SpellObject.Cast(prediction.CastPosition);
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -114,32 +129,61 @@
         }
 
         /// <summary>
+        ///     The on update callback.
+        /// </summary>
+        internal override void OnUpdate()
+        {
+            if (!MyMenu.RootMenu.Item("allycc").IsActive() && !this.ComboModeActive)
+            {
+                return;
+            }
+
+            foreach (var ally in HeroManager.Allies.Where(a => a.IsValidTarget(this.Range + 100, false) && !a.IsMe))
+            {
+                foreach (var buff in
+                    ally.Buffs.Where(
+                        x =>
+                            Misc.DevourerBuffTypes.Contains(x.Type) && x.Caster.Type == GameObjectType.obj_AI_Hero && x.Caster.IsEnemy))
+                {
+                    if (!MyMenu.RootMenu.Item($"buffscc{buff.Type}").IsActive() || !MyMenu.RootMenu.Item($"won{ally.ChampionName}").IsActive() || Misc.BuffIndexesHandled[ally.NetworkId].Contains(buff.Index))
+                    {
+                        continue;
+                    }
+
+                    Misc.BuffIndexesHandled[ally.NetworkId].Add(buff.Index);
+                    this.SpellObject.CastOnUnit(ally);
+                    Misc.BuffIndexesHandled[ally.NetworkId].Remove(buff.Index);
+                }
+            }
+        }
+
+        /// <summary>
         ///     The on mixed callback.
         /// </summary>
         internal override void OnMixed()
         {
-            this.OnCombo();
-        }
-
-        /// <summary>
-        ///     The on last hit callback.
-        /// </summary>
-        internal override void OnLastHit()
-        {
-        }
-
-        /// <summary>
-        ///     The on lane clear callback.
-        /// </summary>
-        internal override void OnLaneClear()
-        {
-        }
-
-        /// <summary>
-        ///     The on jungle clear callback.
-        /// </summary>
-        internal override void OnJungleClear()
-        {
+            var target = Misc.GetTarget(this.minionWRange, this.DamageType);
+            if (target != null)
+            {
+                var minion = MinionManager.GetMinions(this.Range, team: MinionTeam.NotAlly).OrderBy(obj => obj.Distance(ObjectManager.Player.ServerPosition)).FirstOrDefault();
+                // check if there are any minions.
+                if (minion != null)
+                {
+                    // Cast W on the minion.
+                    this.SpellObject.CastOnUnit(minion);
+                    // Check if player has the devoured buff and that the last devoured type is a minion.
+                    if (Misc.HasDevouredBuff && Misc.LastDevouredType == DevourType.Minion)
+                    {
+                        var prediction = this.SpellObject.GetPrediction(target);
+                        Logging.AddEntry(LoggingEntryType.Debug, "Hitchance {0}", prediction.Hitchance);
+                        if (prediction.Hitchance >= HitChance.High)
+                        {
+                            // Spit the minion to the target location.
+                            this.SpellObject.Cast(prediction.CastPosition);
+                        }
+                    }
+                }
+            }
         }
 
         #endregion

@@ -52,7 +52,9 @@
             try
             {
                 this.LoadSpells(new List<ISpell>() { new SpellQ(), new SpellW(), new SpellE() });
+                HeroManager.Allies.ForEach(x => Misc.BuffIndexesHandled.Add(x.NetworkId, new List<int>()));
 
+                // Loads the dangerous ults from LeagueSharp.Data
                 var dangerousSpells = 
                     Data.Get<SpellDatabase>()
                     .Spells.Where(
@@ -63,6 +65,7 @@
                     .Select(x => x.SpellName)
                     .ToList();
 
+                // Adds the spells
                 foreach (var source in dangerousSpells)
                 {
                     var spellName = source;
@@ -107,13 +110,13 @@
                 return;
             }
 
-            if (args.Target.IsEnemy || !args.Target.IsValid<Obj_AI_Hero>())
+            if (!args.Target.IsValid<Obj_AI_Hero>() || args.Target.IsEnemy)
             {
                 return;
             }
 
             // todo : Generate menu items to toggle spells [optional].
-            if (!this.Spells.Any(x => x.SpellName.Equals(args.SData.Name, StringComparison.InvariantCultureIgnoreCase)))
+            if (!this.Spells.Any(x => x.SpellName.Equals(args.SData.Name, StringComparison.InvariantCultureIgnoreCase) || !MyMenu.RootMenu.Item("allydangerousults").IsActive()))
             {
                 return;
             }
@@ -138,7 +141,15 @@
         /// </param>
         private void OnBuffRemove(Obj_AI_Base sender, Obj_AI_BaseBuffRemoveEventArgs args)
         {
-            throw new NotImplementedException();
+            if (!sender.IsMe)
+            {
+                return;
+            }
+
+            if (args.Buff.Name.Equals(Misc.DevouredBuffName))
+            {
+                Misc.LastDevouredType = DevourType.None;
+            }
         }
 
         /// <summary>
@@ -152,7 +163,21 @@
         /// </param>
         private void OnBuffAdd(Obj_AI_Base sender, Obj_AI_BaseBuffAddEventArgs args)
         {
-            throw new NotImplementedException();
+            if (args.Buff.Name.Equals(Misc.DevouredCastBuffName))
+            {
+                var hero = sender as Obj_AI_Hero;
+                if (hero != null)
+                {
+                    Misc.LastDevouredType = hero.IsAlly ? DevourType.Ally : DevourType.Enemy;
+                    return;
+                }
+
+                var minion = sender as Obj_AI_Minion;
+                if (minion != null)
+                {
+                    Misc.LastDevouredType = DevourType.Minion;
+                }
+            }
         }
 
         #endregion
@@ -184,8 +209,7 @@
                 var spellSlotNameLower = spellSlot.ToString().ToLower();
 
                 if ((orbwalkerModeLower.Equals("lasthit")
-                    && (spellSlotNameLower.Equals("e") || spellSlotNameLower.Equals("w")
-                        || spellSlotNameLower.Equals("r"))) || (orbwalkerModeLower.Equals("laneclear") && (spellSlotNameLower.Equals("e"))))
+                    && (!spellSlotNameLower.Equals("q"))) || (orbwalkerModeLower.Equals("mixed") && (spellSlotNameLower.Equals("e"))))
                 {
                     return false;
                 }
@@ -215,14 +239,6 @@
             this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.Combo))
                 .ToList()
                 .ForEach(spell => spell.OnCombo());
-
-            this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.LaneClear))
-                .ToList()
-                .ForEach(spell => spell.OnLaneClear());
-
-            this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.LaneClear))
-               .ToList()
-               .ForEach(spell => spell.OnJungleClear());
 
             this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.LastHit))
                 .ToList()

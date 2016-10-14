@@ -26,12 +26,17 @@
         /// <summary>
         ///     Gets the delay.
         /// </summary>
-        internal override float Delay => 250f;
+        internal override float Delay => 0.25f;
+
+        /// <summary>
+        ///     Spell has collision.
+        /// </summary>
+        internal override bool Collision => true;
 
         /// <summary>
         ///     Gets the range.
         /// </summary>
-        internal override float Range => 800f;
+        internal override float Range => 950f;
 
         /// <summary>
         ///     Gets or sets the skillshot type.
@@ -51,7 +56,7 @@
         /// <summary>
         ///     Gets the width.
         /// </summary>
-        internal override float Width => 70f;
+        internal override float Width => 75f; // evade says 90f
 
         #endregion
 
@@ -64,20 +69,10 @@
         {
             try
             {
-                if (this.SpellObject == null)
-                {
-                    return;
-                }
-
-                var target = Misc.GetTarget(this.Range, this.DamageType);
+                var target = Misc.GetTarget(this.Range + this.Width, this.DamageType);
                 if (target != null)
                 {
-                    // todo : Add more logics.
-                    if ((Misc.GetPassiveStacks(target) == 3 && target.Distance(ObjectManager.Player) <= this.Range) || this.SpellObject.IsKillable(target))
-                    {
-                        this.SpellObject.Cast(target);
-                    }
-                    else
+                    if (target.IsValidTarget(this.Range + this.Width))
                     {
                         this.SpellObject.Cast(target);
                     }
@@ -98,26 +93,20 @@
             this.OnCombo();
         }
 
-
         /// <summary>
         ///     The on last hit callback.
         /// </summary>
         internal override void OnLastHit()
         {
-        }
+            var minion =
+               MinionManager.GetMinions(this.Range)
+                   .Where(obj => this.SpellObject.IsKillable(obj))
+                   .MinOrDefault(obj => obj.Health);
 
-        /// <summary>
-        ///     The on lane clear callback.
-        /// </summary>
-        internal override void OnLaneClear()
-        {
-        }
-
-        /// <summary>
-        ///     The on jungle clear callback.
-        /// </summary>
-        internal override void OnJungleClear()
-        {
+            if (minion != null)
+            {
+                this.SpellObject.Cast(minion);
+            }
         }
 
         #endregion

@@ -256,30 +256,27 @@
         /// </summary>
         internal override void OnJungleClear()
         {
-            var minions = MinionManager.GetMinions(
-                ObjectManager.Player.ServerPosition,
-                this.Range,
-                MinionTypes.All,
-                MinionTeam.Neutral,
-                MinionOrderTypes.MaxHealth);
+            var minions =
+                MinionManager.GetMinions(
+                    ObjectManager.Player.ServerPosition,
+                    this.Range,
+                    MinionTypes.All,
+                    MinionTeam.Neutral,
+                    MinionOrderTypes.MaxHealth).FirstOrDefault();
 
             if (minions != null && MyMenu.RootMenu.Item("jungleclearuse").IsActive())
             {
-                var minion = this.SpellObject.GetLineFarmLocation(minions, this.MaxRange + this.Width);
-                if (minion.MinionsHit >= MyMenu.RootMenu.Item("lasthit.count.jungle").GetValue<Slider>().Value)
+                if (!this.SpellObject.IsCharging)
                 {
-                    if (minion.Position.IsValid())
+                    if (Misc.GetWStacks(minions) >= 3)
                     {
-                        if (!this.SpellObject.IsCharging)
-                        {
-                            this.SpellObject.StartCharging();
-                        }
-
-                        if (this.SpellObject.IsCharging)
-                        {
-                            this.SpellObject.Cast(minion.Position);
-                        }
+                        this.SpellObject.StartCharging();
                     }
+                }
+
+                if (this.SpellObject.IsCharging)
+                {
+                    this.SpellObject.Cast(minions.ServerPosition);
                 }
             }
         }

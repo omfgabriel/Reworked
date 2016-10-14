@@ -185,13 +185,6 @@
         {
         }
 
-        /// <summary>
-        ///     The on update callback.
-        /// </summary>
-        internal virtual void OnUpdate()
-        {
-        }
-
         #endregion
     }
 }

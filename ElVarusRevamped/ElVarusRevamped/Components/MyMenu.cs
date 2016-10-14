@@ -91,7 +91,7 @@
                         nodeCombo.AddItem(new MenuItem("combor.r.radius", "R spread radius").SetValue(new Slider(500, 120, 600)));
                         nodeCombo.AddItem(new MenuItem("combor.r.enmies.range", "Enemies range").SetValue(new Slider(1750, 500, 2500)));
                         nodeCombo.AddItem(new MenuItem("combo.separator-3", String.Empty));
-                        nodeCombo.AddItem(new MenuItem("combo.separator-4", "R BLACKLIST"));
+                        nodeCombo.AddItem(new MenuItem("combo.separator-4", "R BLACKLIST - #BLM"));
                         foreach (var enemy in HeroManager.Enemies)
                         {
                             nodeCombo.AddItem(new MenuItem("combo" + enemy.CharData.BaseSkinName + "use", enemy.CharData.BaseSkinName).SetValue(false));
@@ -147,7 +147,6 @@
                         {
                             nodeLaneClear.AddItem(new MenuItem("lasthit.count", "Minions hit Q").SetValue(new Slider(3, 1, 6)));
                             nodeLaneClear.AddItem(new MenuItem("jungleclearuse", "Use Q in jungle").SetValue(true));
-                            nodeLaneClear.AddItem(new MenuItem("lasthit.count.jungle", "Minions hit Q jungle").SetValue(new Slider(3, 1, 6)));
                         }
 
                         if (spellSlotNameLower.Equals("e", StringComparison.InvariantCultureIgnoreCase))

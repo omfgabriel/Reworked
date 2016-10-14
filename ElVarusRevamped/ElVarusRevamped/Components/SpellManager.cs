@@ -170,7 +170,6 @@
                         .ToList()
                         .ForEach(spell => spell.OnJungleClear());
                     break;
-
                 case Orbwalking.OrbwalkingMode.LastHit:
                     this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.LastHit))
                         .ToList()

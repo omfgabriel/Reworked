@@ -21,7 +21,7 @@
         /// <summary>
         ///     Gets or sets the damage type.
         /// </summary>
-        internal override TargetSelector.DamageType DamageType => TargetSelector.DamageType.Physical;
+        internal override TargetSelector.DamageType DamageType => TargetSelector.DamageType.Magical;
 
         /// <summary>
         ///     Gets Aoe
@@ -151,22 +151,20 @@
         /// </summary>
         internal override void OnJungleClear()
         {
-            var minions = MinionManager.GetMinions(
-                ObjectManager.Player.ServerPosition,
-                this.Range,
-                MinionTypes.All,
-                MinionTeam.Neutral,
-                MinionOrderTypes.MaxHealth);
+            var minions =
+                MinionManager.GetMinions(
+                    ObjectManager.Player.ServerPosition,
+                    this.Range,
+                    MinionTypes.All,
+                    MinionTeam.Neutral,
+                    MinionOrderTypes.MaxHealth).FirstOrDefault();
 
             if (minions != null && MyMenu.RootMenu.Item("jungleclearusee").IsActive())
             {
-                var minion = this.SpellObject.GetCircularFarmLocation(
-                    minions,
-                    this.Range + this.Width);
-
-                if (minion.Position.IsValid())
+                // temp
+                if (Misc.GetWStacks(minions) >= 1 && minions.IsValid)
                 {
-                    this.SpellObject.Cast(minion.Position);
+                    this.SpellObject.Cast(minions.Position);
                 }
             }
         }

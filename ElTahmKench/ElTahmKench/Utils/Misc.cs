@@ -16,6 +16,25 @@
         #region Methods
 
         /// <summary>
+        ///     The last devoured target type
+        /// </summary>
+        internal static DevourType LastDevouredType;
+
+        /// <summary>
+        ///     Player has the devoured buff.
+        /// </summary>
+        internal static bool HasDevouredBuff=> ObjectManager.Player.HasBuff("tahmkenchwhasdevouredtarget");
+
+        /// <summary>
+        ///     Gets the passive stacks.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns>
+        ///     <see cref="GetPassiveStacks" />
+        /// </returns>
+        internal static int GetPassiveStacks(Obj_AI_Base target) => target.GetBuffCount("tahmkenchpdebuffcounter");
+
+        /// <summary>
         ///     Gets a target from the common target selector.
         /// </summary>
         /// <param name="range">
@@ -35,7 +54,7 @@
             }
             catch (Exception e)
             {
-                Logging.AddEntry(LoggingEntryTrype.Error, "@Misc.cs: Can not return target - {0}", e);
+                Logging.AddEntry(LoggingEntryType.Error, "@Misc.cs: Can not return target - {0}", e);
                 throw;
             }
         }

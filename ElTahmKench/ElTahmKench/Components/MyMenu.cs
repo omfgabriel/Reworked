@@ -80,12 +80,10 @@
                             new MenuItem("lasthit" + spellSlotNameLower + "use", "Use " + spellSlotName).SetValue(true));
                         nodeLastHit.AddItem(
                             new MenuItem("lasthit" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(50)));
-
-                        nodeCombo.AddItem(new MenuItem("lasthit.mode", "Q mode").SetValue(new StringList(new[] { "Always", "Out of range" }, 0)));
                     }
+
                     node.AddSubMenu(nodeLastHit);
                 }
-
 
                 if (!spellSlotNameLower.Equals("e", StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -94,15 +92,6 @@
                         nodeLaneClear.AddItem(new MenuItem("laneclear" + spellSlotNameLower + "use", "Use " + spellSlotName).SetValue(true));
                         nodeLaneClear.AddItem(new MenuItem("laneclear" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(50)));
 
-                        if (spellSlotNameLower.Equals("r", StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            nodeLaneClear.AddItem(new MenuItem("laneclear.r.siege", "Use " + spellSlotName + " to execute siege").SetValue(false));
-                        }
-
-                        if (spellSlotNameLower.Equals("q", StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            nodeLaneClear.AddItem(new MenuItem("lasthit.count", "Minions hit Q").SetValue(new Slider(2, 1, 5)));
-                        }
                     }
 
                     node.AddSubMenu(nodeLaneClear);
@@ -112,7 +101,7 @@
             }
             catch (Exception e)
             {
-                Logging.AddEntry(LoggingEntryTrype.Error, "@MyMenu.cs: Can not generate menu for spell - {0}", e);
+                Logging.AddEntry(LoggingEntryType.Error, "@MyMenu.cs: Can not generate menu for spell - {0}", e);
                 throw;
             }
         }

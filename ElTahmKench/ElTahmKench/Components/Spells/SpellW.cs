@@ -31,7 +31,7 @@
         /// <summary>
         ///     Gets the range.
         /// </summary>
-        internal override float Range => 0f;
+        internal override float Range => 250f;
 
         /// <summary>
         ///     Gets or sets the skillshot type.
@@ -46,7 +46,7 @@
         /// <summary>
         ///     Gets the spell slot.
         /// </summary>
-        internal override SpellSlot SpellSlot => SpellSlot.Q;
+        internal override SpellSlot SpellSlot => SpellSlot.W;
 
         /// <summary>
         ///     Gets the width.
@@ -69,14 +69,43 @@
                     return;
                 }
 
+                // todo: Adjust Range 250 to devourer and x spit range.
                 var target = Misc.GetTarget(this.Range, this.DamageType);
                 if (target != null)
                 {
+                    // todo : If the range is a little bit bigger then the attack range, option to force orbwalker to walk to target.
+                    if (Misc.GetPassiveStacks(target) == 3 && Orbwalking.InAutoAttackRange(target))
+                    {
+                        this.SpellObject.CastOnUnit(target);
+                    }
+
+                    // todo : Move this code to the right place.
+                    // todo : Check for Elise spiderlings etc, do not eat them while chasing enemy.
+                    // Get the minions in range when the target is out of autoattackrange + a little bit.
+                    var minion = MinionManager.GetMinions(this.Range).MinOrDefault(obj => obj.Health);
+                    // check if there are any minions.
+                    if (minion != null)
+                    {
+                        // Cast W on the minion
+                        // todo: OnbuffAdd set to Misc.LastDevouredType = DevourType.Minion.
+                        this.SpellObject.CastOnUnit(minion);
+                        // Check if there is indeed a minion eaten.
+                        if (Misc.HasDevouredBuff) // Maybe this should be a little different after OnBuffAdd/OnBuffRemove
+                        {
+                            // todo : Prediction options.
+                            // Spit the minion to the target location.
+                            this.SpellObject.Cast(target);
+                        }
+                    }
+                    else
+                    {
+                        Logging.AddEntry(LoggingEntryType.Debug, "@SpellW.cs: There is no minion in range");
+                    }
                 }
             }
             catch (Exception e)
             {
-                Logging.AddEntry(LoggingEntryTrype.Error, "@SpellE.cs: Can not run OnCombo - {0}", e);
+                Logging.AddEntry(LoggingEntryType.Error, "@SpellW.cs: Can not run OnCombo - {0}", e);
                 throw;
             }
         }
@@ -88,7 +117,6 @@
         {
             this.OnCombo();
         }
-
 
         /// <summary>
         ///     The on last hit callback.

@@ -26,12 +26,12 @@
         /// <summary>
         ///     Gets the delay.
         /// </summary>
-        internal override float Delay => 0f;
+        internal override float Delay => 250f;
 
         /// <summary>
         ///     Gets the range.
         /// </summary>
-        internal override float Range => 0f;
+        internal override float Range => 800f;
 
         /// <summary>
         ///     Gets or sets the skillshot type.
@@ -41,7 +41,7 @@
         /// <summary>
         ///     Gets the speed.
         /// </summary>
-        internal override float Speed => 0f;
+        internal override float Speed => 2800f;
 
         /// <summary>
         ///     Gets the spell slot.
@@ -51,7 +51,7 @@
         /// <summary>
         ///     Gets the width.
         /// </summary>
-        internal override float Width => 0f;
+        internal override float Width => 70f;
 
         #endregion
 
@@ -72,11 +72,20 @@
                 var target = Misc.GetTarget(this.Range, this.DamageType);
                 if (target != null)
                 {
+                    // todo : Add more logics.
+                    if ((Misc.GetPassiveStacks(target) == 3 && target.Distance(ObjectManager.Player) <= this.Range) || this.SpellObject.IsKillable(target))
+                    {
+                        this.SpellObject.Cast(target);
+                    }
+                    else
+                    {
+                        this.SpellObject.Cast(target);
+                    }
                 }
             }
             catch (Exception e)
             {
-                Logging.AddEntry(LoggingEntryTrype.Error, "@SpellE.cs: Can not run OnCombo - {0}", e);
+                Logging.AddEntry(LoggingEntryType.Error, "@SpellQ.cs: Can not run OnCombo - {0}", e);
                 throw;
             }
         }

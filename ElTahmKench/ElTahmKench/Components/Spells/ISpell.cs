@@ -32,10 +32,6 @@
                 {
                     this.SpellObject.SetTargetted(this.Delay, this.Speed);
                 }
-                else if (this.Charged)
-                {
-                    this.SpellObject.SetCharged(this.SpellName, this.BuffName, this.MinRange, this.MaxRange, this.DeltaT);
-                }
                 else
                 {
                     this.SpellObject.SetSkillshot(
@@ -48,7 +44,7 @@
             }
             catch (Exception e)
             {
-                Logging.AddEntry(LoggingEntryTrype.Error, "@ISpell.cs: Can not initialize the base class - {0}", e);
+                Logging.AddEntry(LoggingEntryType.Error, "@ISpell.cs: Can not initialize the base class - {0}", e);
                 throw;
             }
         }
@@ -111,40 +107,9 @@
         internal virtual bool Targeted { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether the spell is charged.
-        /// </summary>
-        [DefaultValue(false)]
-        internal virtual bool Charged { get; set; }
-
-        /// <summary>
         ///     Gets or sets the width.
         /// </summary>
         internal virtual float Width { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the max range.
-        /// </summary>
-        internal virtual int MaxRange { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the min range.
-        /// </summary>
-        internal virtual int MinRange { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the deltaT.
-        /// </summary>
-        internal virtual float DeltaT { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the spellname.
-        /// </summary>
-        internal virtual string SpellName { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the buffname.
-        /// </summary>
-        internal virtual string BuffName { get; set; }
 
         #endregion
 

@@ -46,7 +46,7 @@
         /// <summary>
         ///     Gets the spell slot.
         /// </summary>
-        internal override SpellSlot SpellSlot => SpellSlot.Q;
+        internal override SpellSlot SpellSlot => SpellSlot.E;
 
         /// <summary>
         ///     Gets the width.
@@ -76,7 +76,7 @@
             }
             catch (Exception e)
             {
-                Logging.AddEntry(LoggingEntryTrype.Error, "@SpellE.cs: Can not run OnCombo - {0}", e);
+                Logging.AddEntry(LoggingEntryType.Error, "@SpellE.cs: Can not run OnCombo - {0}", e);
                 throw;
             }
         }

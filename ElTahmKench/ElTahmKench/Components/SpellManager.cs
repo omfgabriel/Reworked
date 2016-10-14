@@ -11,6 +11,9 @@
     using LeagueSharp;
     using LeagueSharp.Common;
 
+    using LeagueSharp.Data;
+    using LeagueSharp.Data.DataTypes;
+    
     /// <summary>
     ///     The spell manager.
     /// </summary>
@@ -22,6 +25,20 @@
         ///     The spells.
         /// </summary>
         private readonly List<ISpell> spells = new List<ISpell>();
+
+        /// <summary>
+        ///     Gets or sets the leaguesharp.data spells.
+        /// </summary>
+        /// <value>
+        ///     The spells.
+        /// </value>
+        private List<SpellDatabaseEntry> Spells { get; } = new List<SpellDatabaseEntry>();
+
+        /// <summary>
+        ///     Gets or sets the champion spells.
+        /// </summary>
+        private Dictionary<string, List<SpellSlot>> ChampionSpells { get; } = new Dictionary<string, List<SpellSlot>>();
+
 
         #endregion
 
@@ -35,14 +52,98 @@
             try
             {
                 this.LoadSpells(new List<ISpell>() { new SpellQ(), new SpellW(), new SpellE() });
+
+                var dangerousSpells = 
+                    Data.Get<SpellDatabase>()
+                    .Spells.Where(
+                        x => 
+                        x.DangerValue >= 5 
+                        && HeroManager.Enemies.Any(
+                            y => x.ChampionName.Equals(y.ChampionName, StringComparison.InvariantCultureIgnoreCase)))
+                    .Select(x => x.SpellName)
+                    .ToList();
+
+                foreach (var source in dangerousSpells)
+                {
+                    var spellName = source;
+                    this.Spells.Add(Data.Get<SpellDatabase>().Spells.First(x => x.SpellName.Equals(source)));
+                    if (!dangerousSpells.Contains(spellName))
+                    {
+                        continue;
+                    }
+                }
+
+                foreach (var spell in this.Spells)
+                {
+                    if (!this.ChampionSpells.ContainsKey(spell.ChampionName))
+                    {
+                        this.ChampionSpells[spell.ChampionName] = new List<SpellSlot>();
+                    }
+
+                    this.ChampionSpells[spell.ChampionName].Add(spell.Slot);
+                }
             }
             catch (Exception e)
             {
-                Logging.AddEntry(LoggingEntryTrype.Error, "@SpellManager.cs: Can not initialize the spells - {0}", e);
+                Logging.AddEntry(LoggingEntryType.Error, "@SpellManager.cs: Can not initialize the spells - {0}", e);
                 throw;
             }
 
             Game.OnUpdate += this.Game_OnUpdate;
+            Obj_AI_Base.OnBuffAdd += this.OnBuffAdd;
+            Obj_AI_Base.OnBuffRemove += this.OnBuffRemove;
+            Obj_AI_Base.OnProcessSpellCast += this.ObjAiBaseOnProcessSpellCast;
+        }
+
+        /// <summary>
+        ///     Fired when the game processes a spell cast.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="args">The <see cref="GameObjectProcessSpellCastEventArgs" /> instance containing the event data.</param>
+        private void ObjAiBaseOnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
+        {
+
+            if (!sender.IsEnemy)
+            {
+                return;
+            }
+            // todo : Check if player is in range of ally.
+            // todo : Generate menu items to toggle spells [optional].
+
+            if(!this.Spells.Any(x => x.SpellName.Equals(args.SData.Name, StringComparison.InvariantCultureIgnoreCase)))
+            {
+                return;
+            }
+
+            // todo : Cast W on ally.
+        }
+
+        /// <summary>
+        ///    The OnBuffRemove event.
+        /// </summary>
+        /// <param name="sender">
+        ///     The sender
+        /// </param>
+        /// <param name="args">
+        ///     The event data
+        /// </param>
+        private void OnBuffRemove(Obj_AI_Base sender, Obj_AI_BaseBuffRemoveEventArgs args)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        ///     The OnBuffAdd event.
+        /// </summary>
+        /// <param name="sender">
+        ///     The sender
+        /// </param>
+        /// <param name="args">
+        ///     The event data
+        /// </param>
+        private void OnBuffAdd(Obj_AI_Base sender, Obj_AI_BaseBuffAddEventArgs args)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion
@@ -87,7 +188,7 @@
             }
             catch (Exception e)
             {
-                Logging.AddEntry(LoggingEntryTrype.Error, "@SpellManager.cs: Can not get spell active state for slot {0} - {1}", spellSlot.ToString(), e);
+                Logging.AddEntry(LoggingEntryType.Error, "@SpellManager.cs: Can not get spell active state for slot {0} - {1}", spellSlot.ToString(), e);
                 throw;
             }
         }

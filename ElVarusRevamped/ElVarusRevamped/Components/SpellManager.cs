@@ -142,34 +142,41 @@
                 if (target != null)
                 {
                     Program.Orbwalker.ForceTarget(target);
-                    Logging.AddEntry(LoggingEntryTrype.Debug, "@SpellManager: Forced target: {0}", target.ChampionName);
                 }
                 else
                 {
                     Program.Orbwalker.ForceTarget(null);
-                    Logging.AddEntry(LoggingEntryTrype.Debug, "@SpellManager: No target forced");
                 }
             }
 
-            this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.Combo))
-                .ToList()
-                .ForEach(spell => spell.OnCombo());
+            // this needs a cleanup
+            switch (Program.Orbwalker.ActiveMode)
+            {
+                case Orbwalking.OrbwalkingMode.Combo:
+                    this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.Combo))
+                        .ToList()
+                        .ForEach(spell => spell.OnCombo());
+                    break;
+                case Orbwalking.OrbwalkingMode.Mixed:
+                    this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.Mixed))
+                        .ToList()
+                        .ForEach(spell => spell.OnMixed());
+                    break;
+                case Orbwalking.OrbwalkingMode.LaneClear:
+                    this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.LaneClear))
+                        .ToList()
+                        .ForEach(spell => spell.OnLaneClear());
+                    this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.LaneClear))
+                        .ToList()
+                        .ForEach(spell => spell.OnJungleClear());
+                    break;
 
-            this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.LaneClear))
-              .ToList()
-              .ForEach(spell => spell.OnLaneClear());
-
-            this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.LaneClear))
-                .ToList()
-                .ForEach(spell => spell.OnJungleClear());
-
-            this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.LastHit))
-                .ToList()
-                .ForEach(spell => spell.OnLastHit());
-
-            this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.Mixed))
-                .ToList()
-                .ForEach(spell => spell.OnMixed());
+                case Orbwalking.OrbwalkingMode.LastHit:
+                    this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.LastHit))
+                        .ToList()
+                        .ForEach(spell => spell.OnLastHit());
+                    break;
+            }
         }
 
         /// <summary>

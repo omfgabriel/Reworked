@@ -119,6 +119,14 @@
                         {
                             this.SpellObject.Cast(target);
                         }
+
+                        if (this.SpellObject.IsCharging)
+                        {
+                            if (target.Distance(ObjectManager.Player) < this.Range + 250)
+                            {
+                                this.SpellObject.Cast(target);
+                            }
+                        }
                     }
 
                     if (ObjectManager.Player.HealthPercent

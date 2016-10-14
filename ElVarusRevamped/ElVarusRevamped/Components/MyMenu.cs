@@ -90,6 +90,12 @@
                         nodeCombo.AddItem(new MenuItem("combor.count", "Minimum enemies hit with R").SetValue(new Slider(3, 1, 5)));
                         nodeCombo.AddItem(new MenuItem("combor.r.radius", "R spread radius").SetValue(new Slider(500, 120, 600)));
                         nodeCombo.AddItem(new MenuItem("combor.r.enmies.range", "Enemies range").SetValue(new Slider(1750, 500, 2500)));
+                        nodeCombo.AddItem(new MenuItem("combo.separator-3", String.Empty));
+                        nodeCombo.AddItem(new MenuItem("combo.separator-4", "R BLACKLIST"));
+                        foreach (var enemy in HeroManager.Enemies)
+                        {
+                            nodeCombo.AddItem(new MenuItem("combo" + enemy.CharData.BaseSkinName + "use", enemy.CharData.BaseSkinName).SetValue(false));
+                        }
                     }
                 }
 

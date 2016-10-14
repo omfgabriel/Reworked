@@ -86,7 +86,7 @@
                     if (MyMenu.RootMenu.Item("comboealways").IsActive() || 
                         this.SpellObject.IsKillable(target) || 
                         Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("comboew.count").GetValue<Slider>().Value || 
-                        (HeroManager.Enemies.Count(x => x.IsValidTarget(this.Range + this.Width)) >= MyMenu.RootMenu.Item("comboe.count.hit").GetValue<Slider>().Value))
+                        HeroManager.Enemies.Count(x => x.IsValidTarget(this.Range + this.Width)) >= MyMenu.RootMenu.Item("comboe.count.hit").GetValue<Slider>().Value)
                     {
                         this.SpellObject.Cast(target, aoe: true);
                     }

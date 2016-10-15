@@ -93,9 +93,7 @@
 
                 if (ObjectManager.Player.Distance(target) + target.BoundingRadius <= this.Range + ObjectManager.Player.BoundingRadius && Misc.LastDevouredType == DevourType.None)
                 {
-                    // THIS IS PURE PANIC!!!
-                    Hud.SelectedUnit = (Obj_AI_Hero)target;
-                    this.SpellObject.CastOnUnit((Obj_AI_Hero)target);
+                    this.SpellObject.CastOnUnit(target);
                 }
                 else
                 {

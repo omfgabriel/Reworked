@@ -70,8 +70,7 @@
                     return;
                 }
 
-                var spellQ = new SpellQ();
-                if (spellQ.SpellObject.IsCharging)
+                if (Misc.SpellQ.SpellObject.IsCharging)
                 {
                     return;
                 }

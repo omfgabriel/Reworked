@@ -25,6 +25,7 @@
         /// </summary>
         private readonly List<ISpell> spells = new List<ISpell>();
 
+
         #endregion
 
         #region Constructors and Destructors
@@ -37,6 +38,8 @@
             try
             {
                 this.LoadSpells(new List<ISpell>() { new SpellQ(), new SpellE(), new SpellR() });
+                Misc.SpellQ = new SpellQ();
+                Misc.SpellE = new SpellE();
             }
             catch (Exception e)
             {
@@ -57,18 +60,16 @@
         {
             try
             {
-                var qSpell = new SpellQ();
-                if (qSpell.SpellObject.IsCharging)
+                if (Misc.SpellQ.SpellObject.IsCharging)
                 {
                     return;
                 }
 
-                var eSpell = new SpellE();
-                if (MyMenu.RootMenu.Item("gapclosereuse").IsActive() && eSpell.SpellSlot.IsReady())
+                if (MyMenu.RootMenu.Item("gapclosereuse").IsActive() && Misc.SpellE.SpellSlot.IsReady())
                 {
-                    if (gapcloser.End.Distance(ObjectManager.Player.Position) <= eSpell.Range)
+                    if (gapcloser.End.Distance(ObjectManager.Player.Position) <= Misc.SpellE.Range)
                     {
-                        eSpell.SpellObject.Cast(gapcloser.End);
+                        Misc.SpellE.SpellObject.Cast(gapcloser.End);
                     }
                 }
             }

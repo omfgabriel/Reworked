@@ -3,6 +3,7 @@
     using System;
     using System.Linq;
 
+    using ElVarusRevamped.Components.Spells;
     using ElVarusRevamped.Enumerations;
 
     using LeagueSharp;
@@ -14,6 +15,16 @@
     internal static class Misc
     {
         #region Methods
+
+        /// <summary>
+        ///     Spell Q.
+        /// </summary>
+        public static SpellQ SpellQ;
+
+        /// <summary>
+        ///     Spell E.
+        /// </summary>
+        public static SpellE SpellE;
 
         /// <summary>
         ///     Gets the target W stacks

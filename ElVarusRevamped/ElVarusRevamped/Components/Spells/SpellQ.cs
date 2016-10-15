@@ -200,29 +200,32 @@
             else
             {
                 var allMinions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, this.Range);
-                foreach (var minion in allMinions.Where(minion => this.SpellObject.IsKillable(minion) && minion.IsValidTarget(this.MaxRange)))
+                if (allMinions != null)
                 {
-                    var killcount = 0;
-
-                    foreach (var colminion in allMinions)
+                    foreach (var minion in allMinions.Where(minion => this.SpellObject.IsKillable(minion) && minion.IsValidTarget(this.MaxRange)))
                     {
-                        if (this.SpellObject.IsKillable(colminion))
+                        var killcount = 0;
+
+                        foreach (var colminion in allMinions)
                         {
-                            killcount++;
+                            if (this.SpellObject.IsKillable(colminion))
+                            {
+                                killcount++;
+                            }
+                            else
+                            {
+                                break;
+                            }
                         }
-                        else
+
+                        if (killcount >= MyMenu.RootMenu.Item("lasthit.count.clear").GetValue<Slider>().Value)
                         {
-                            break;
+                            this.SpellObject.Cast(minion);
                         }
                     }
-
-                if (killcount >= MyMenu.RootMenu.Item("lasthit.count.clear").GetValue<Slider>().Value)
-                {
-                    this.SpellObject.Cast(minion);
                 }
             }
         }
-    }
 
         /// <summary>
         ///     The on lane clear callback.

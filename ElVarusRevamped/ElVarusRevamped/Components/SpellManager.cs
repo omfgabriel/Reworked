@@ -149,33 +149,25 @@
                 }
             }
 
-            // this needs a cleanup
-            switch (Program.Orbwalker.ActiveMode)
-            {
-                case Orbwalking.OrbwalkingMode.Combo:
-                    this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.Combo))
+            this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.Combo))
                         .ToList()
                         .ForEach(spell => spell.OnCombo());
-                    break;
-                case Orbwalking.OrbwalkingMode.Mixed:
-                    this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.Mixed))
+
+            this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.Mixed))
                         .ToList()
                         .ForEach(spell => spell.OnMixed());
-                    break;
-                case Orbwalking.OrbwalkingMode.LaneClear:
-                    this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.LaneClear))
+
+            this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.LaneClear))
                         .ToList()
                         .ForEach(spell => spell.OnLaneClear());
-                    this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.LaneClear))
+
+            this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.LaneClear))
                         .ToList()
                         .ForEach(spell => spell.OnJungleClear());
-                    break;
-                case Orbwalking.OrbwalkingMode.LastHit:
-                    this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.LastHit))
+
+            this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.LastHit))
                         .ToList()
                         .ForEach(spell => spell.OnLastHit());
-                    break;
-            }
         }
 
         /// <summary>

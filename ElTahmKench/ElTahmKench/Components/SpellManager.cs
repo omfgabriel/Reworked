@@ -51,6 +51,7 @@
             try
             {
                 this.LoadSpells(new List<ISpell>() { new SpellQ(), new SpellW(), new SpellE() });
+                Misc.SpellW = new SpellW();
                 HeroManager.Allies.ForEach(x => Misc.BuffIndexesHandled.Add(x.NetworkId, new List<int>()));
 
                 // Loads the dangerous ults from LeagueSharp.Data
@@ -112,8 +113,7 @@
                     return;
                 }
 
-                var spellW = new SpellW();
-                if (!args.Target.IsValid<Obj_AI_Hero>() || args.Target.IsEnemy || args.Target.IsMe || !spellW.SpellObject.IsInRange(args.Target))
+                if (!args.Target.IsValid<Obj_AI_Hero>() || args.Target.IsEnemy || args.Target.IsMe || !Misc.SpellW.SpellObject.IsInRange(args.Target))
                 {
                     return;
                 }
@@ -131,9 +131,9 @@
                     return;
                 }
 
-                if (spellW.SpellSlot.IsReady() && spellW.SpellObject.IsInRange(target) && !target.IsMe)
+                if (Misc.SpellW.SpellSlot.IsReady() && Misc.SpellW.SpellObject.IsInRange(target) && !target.IsMe)
                 {
-                    spellW.SpellObject.CastOnUnit(target);
+                    Misc.SpellW.SpellObject.CastOnUnit(target);
                     Logging.AddEntry(LoggingEntryType.Debug, "@SpellManager.cs: ObjAiBaseOnProcessSpellCast");
                 }
             }

@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using ElTahmKench.Components.Spells;
     using ElTahmKench.Enumerations;
 
     using LeagueSharp;
@@ -15,6 +16,11 @@
     internal static class Misc
     {
         #region Methods
+
+        /// <summary>
+        ///     Spell W.
+        /// </summary>
+        public static SpellW SpellW;
 
         /// <summary>
         ///     The last devoured target type

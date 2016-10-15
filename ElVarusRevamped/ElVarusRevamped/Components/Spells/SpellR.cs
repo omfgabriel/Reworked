@@ -108,7 +108,7 @@
                                         && h.Distance(
                                             ObjectManager.Player.Position.Extend(
                                                 target.Position,
-                                                ObjectManager.Player.Distance(target) / 2f)) <= MyMenu.RootMenu.Item("combor.r.enmies.range").GetValue<Slider>().Value);
+                                                ObjectManager.Player.Distance(target) / 2f)) <= MyMenu.RootMenu.Item("combor.r.enemies.range").GetValue<Slider>().Value);
 
                             if (!MyMenu.RootMenu.Item("combo" + target.CharData.BaseSkinName + "use").IsActive())
                             {

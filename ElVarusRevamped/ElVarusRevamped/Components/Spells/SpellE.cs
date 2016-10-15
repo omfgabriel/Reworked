@@ -88,6 +88,12 @@
                         HeroManager.Enemies.Count(x => x.IsValidTarget(this.Range + this.Width)) >= MyMenu.RootMenu.Item("comboe.count.hit").GetValue<Slider>().Value)
                     {
                         this.SpellObject.Cast(target, aoe: true);
+
+                        /*var prediction = this.SpellObject.GetPrediction(target);
+                        if (prediction.Hitchance >= HitChance.High)
+                        {
+                            this.SpellObject.Cast(prediction.CastPosition);
+                        }*/
                     }
                 }
             }
@@ -111,8 +117,7 @@
             var target = Misc.GetTarget(this.Range + this.Width, this.DamageType);
             if (target != null)
             {
-                if (this.SpellObject.IsCharging ||
-                    MyMenu.RootMenu.Item("mixedeusealways").IsActive() ||
+                if (MyMenu.RootMenu.Item("mixedeusealways").IsActive() ||
                     Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("mixedeusealways.count").GetValue<Slider>().Value)
                 {
                     var prediction = this.SpellObject.GetPrediction(target);

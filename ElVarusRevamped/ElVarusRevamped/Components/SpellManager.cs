@@ -65,6 +65,12 @@
                     return;
                 }
 
+
+                if (!MyMenu.RootMenu.Item("gapcloser" + gapcloser.Sender.CharData.BaseSkinName + "use").IsActive())
+                {
+                    return;
+                }
+
                 if (MyMenu.RootMenu.Item("gapclosereuse").IsActive() && Misc.SpellE.SpellSlot.IsReady())
                 {
                     if (gapcloser.End.Distance(ObjectManager.Player.Position) <= Misc.SpellE.Range)
@@ -139,14 +145,12 @@
 
             if (MyMenu.RootMenu.Item("forceqalways").IsActive())
             {
-                var target = HeroManager.Enemies.FirstOrDefault(x => Misc.GetWStacks(x) > 0 && x.IsValidTarget(Orbwalking.GetRealAutoAttackRange(ObjectManager.Player) + 150) && !x.IsDead && x.IsVisible);
+                var target = HeroManager.Enemies.Find(x => x.IsValidTarget(ObjectManager.Player.AttackRange + 150) 
+                    && Misc.GetWStacks(x) > 0 && !x.IsDead && x.IsVisible);
+
                 if (target != null)
                 {
-                    Program.Orbwalker.ForceTarget(target);
-                }
-                else
-                {
-                    Program.Orbwalker.ForceTarget(null);
+                    TargetSelector.SetTarget(target);
                 }
             }
 
@@ -182,7 +186,7 @@
             if (MyMenu.RootMenu.Item("killstealquse").IsActive() && Misc.SpellQ.SpellSlot.IsReady())
             {
                 var killableEnemy =
-                    HeroManager.Enemies.FirstOrDefault(e => Misc.SpellQ.SpellObject.IsKillable(e) && !Orbwalking.InAutoAttackRange(e) && e.IsValidTarget(Misc.SpellQ.SpellObject.ChargedMaxRange)
+                    HeroManager.Enemies.FirstOrDefault(e => Misc.SpellQ.SpellObject.IsKillable(e) && e.IsValidTarget(Misc.SpellQ.SpellObject.ChargedMaxRange - 200)
                                 && ObjectManager.Player.ManaPercent
                                 > MyMenu.RootMenu.Item("killstealqmana").GetValue<Slider>().Value);
 
@@ -214,7 +218,7 @@
 
                 if (killableEnemy != null)
                 {
-                    Misc.SpellE.SpellObject.Cast(killableEnemy.Position);
+                    Misc.SpellE.SpellObject.Cast(killableEnemy);
                 }
             }
         }

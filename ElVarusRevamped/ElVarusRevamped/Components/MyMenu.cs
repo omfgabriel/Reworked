@@ -69,32 +69,33 @@
                         nodeCombo.AddItem(new MenuItem("castmode", "Q mode").SetValue(new StringList(new[] { "Target", "Predicted (HIGH)" }, 0)));
                         nodeCombo.AddItem(new MenuItem("forceqalways", "Force target with W stacks").SetValue(true));
                         nodeCombo.AddItem(new MenuItem("comboqalways", "Always use " + spellSlotName).SetValue(true));
-                        nodeCombo.AddItem(new MenuItem("combow.count", "Minimum W stacks").SetValue(new Slider(3, 0, 3)));
+                        nodeCombo.AddItem(new MenuItem("combow.count", "Minimum W stacks").SetValue(new Slider(2, 1, 3)));
                         nodeCombo.AddItem(new MenuItem("comboq.fast", "Fast Q min health").SetValue(new Slider(20)));
                     }
 
                     if (spellSlotNameLower.Equals("e", StringComparison.InvariantCultureIgnoreCase))
                     {
                         nodeCombo.AddItem(new MenuItem("comboealways", "Always use " + spellSlotName).SetValue(true));
-                        nodeCombo.AddItem(new MenuItem("comboew.count", "Minimum W stacks").SetValue(new Slider(3, 0, 3)));
+                        nodeCombo.AddItem(new MenuItem("comboew.count", "Minimum W stacks").SetValue(new Slider(2, 1, 3)));
                         nodeCombo.AddItem(new MenuItem("comboe.count.hit", "Enemies hit").SetValue(new Slider(2, 1, 5)));
                     }
 
                     if (spellSlotNameLower.Equals("r", StringComparison.InvariantCultureIgnoreCase))
                     {
+                        nodeCombo.SubMenu("1v1 settings").AddItem(new MenuItem("combor.count.solo", "Enemy minimum health percentage").SetValue(new Slider(35)));
+                        nodeCombo.SubMenu("1v1 settings").AddItem(new MenuItem("combor.count.enemies", "Maximum enemies in range").SetValue(new Slider(2, 1, 5)));
+                        nodeCombo.SubMenu("1v1 settings").AddItem(new MenuItem("combor.count.allies", "Maximum allies in range").SetValue(new Slider(3, 1, 5)));
+                        nodeCombo.SubMenu("1v1 settings").AddItem(new MenuItem("combor.r.allies.range", "Allies range check").SetValue(new Slider(1750, 500, 2500)));
+                        nodeCombo.SubMenu("1v1 settings").AddItem(new MenuItem("combor.r.enemies.range", "Enemies range check").SetValue(new Slider(1750, 500, 2500)));
+
                         nodeCombo.AddItem(new MenuItem("combo.separator-2", String.Empty));
                         nodeCombo.AddItem(new MenuItem("combousersolo", "Use " + spellSlotName + " solo").SetValue(true));
-                        nodeCombo.AddItem(new MenuItem("combor.count.solo", "Enemy min health solo").SetValue(new Slider(35)));
-                        nodeCombo.AddItem(new MenuItem("combor.count.enemies", "Max enemies in range").SetValue(new Slider(2, 1, 5)));
+                     
                         nodeCombo.AddItem(new MenuItem("combo.separator", String.Empty));
                         nodeCombo.AddItem(new MenuItem("combousermultiple", "Use " + spellSlotName + " AoE").SetValue(true));
                         nodeCombo.AddItem(new MenuItem("combor.count", "Minimum enemies hit with R").SetValue(new Slider(3, 1, 5)));
-                        // new
-                        nodeCombo.AddItem(new MenuItem("combor.count.allies", "Max allies in range").SetValue(new Slider(3, 1, 5)));
-                        nodeCombo.AddItem(new MenuItem("combor.r.allies.range", "Allies range").SetValue(new Slider(1750, 500, 2500)));
-                        //new
+
                         nodeCombo.AddItem(new MenuItem("combor.r.radius", "R spread radius").SetValue(new Slider(500, 120, 600)));
-                        nodeCombo.AddItem(new MenuItem("combor.r.enmies.range", "Enemies range").SetValue(new Slider(1750, 500, 2500)));
                         nodeCombo.AddItem(new MenuItem("combo.separator-3", String.Empty));
                         nodeCombo.AddItem(new MenuItem("combo.separator-4", "R BLACKLIST - #BLM"));
                         foreach (var enemy in HeroManager.Enemies)
@@ -170,6 +171,11 @@
                     {
                         nodeMisc.AddItem(new MenuItem("killsteal" + spellSlotNameLower + "use", "Use " + spellSlotName + " to killsteal").SetValue(false));
                         nodeMisc.AddItem(new MenuItem("killsteal" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(5)));
+
+                        foreach (var enemy in HeroManager.Enemies)
+                        {
+                            nodeCombo.AddItem(new MenuItem("gapcloser" + enemy.CharData.BaseSkinName + "use", "Gapcloser: " + enemy.CharData.BaseSkinName).SetValue(true));
+                        }
 
                         if (spellSlotNameLower.Equals("e", StringComparison.InvariantCultureIgnoreCase))
                         {

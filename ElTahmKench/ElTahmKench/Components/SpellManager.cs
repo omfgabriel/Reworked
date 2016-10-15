@@ -51,15 +51,6 @@
         {
             try
             {
-
-                foreach (var spellData in ObjectManager.Player.Spellbook.Spells)
-                {
-                    Console.WriteLine("Spell name: " + spellData.SData.Name);
-                    Console.WriteLine("Spell width: " + spellData.SData.LineWidth);
-                    Console.WriteLine("Spell speed: " + spellData.SData.MissileSpeed);
-                    Console.WriteLine("Spell range: " + spellData.SData.CastRange);
-                }
-
                 this.LoadSpells(new List<ISpell>() { new SpellQ(), new SpellW(), new SpellE() });
                 Misc.SpellW = new SpellW();
                 Misc.SpellQ = new SpellQ();

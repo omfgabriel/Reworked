@@ -69,7 +69,6 @@
                         || target.Health <= this.SpellObject.GetDamage(target))
                     {
                         this.SpellObject.Cast(target);
-                        Logging.AddEntry(LoggingEntryTrype.Debug, "@SpellR.cs: Target buffed R");
                     }
 
 
@@ -91,7 +90,6 @@
                             if (target.Health < this.SpellObject.GetDamage(target))
                             {
                                 this.SpellObject.Cast(target);
-                                Logging.AddEntry(LoggingEntryTrype.Debug, "@SpellR.cs: Securing a kill");
                             }
                         }
                     }
@@ -101,7 +99,6 @@
                         if (target.Health < this.SpellObject.GetDamage(target))
                         {
                             this.SpellObject.Cast(target);
-                            Logging.AddEntry(LoggingEntryTrype.Debug, "@SpellR.cs: Second R");
                         }
                     }
                 }

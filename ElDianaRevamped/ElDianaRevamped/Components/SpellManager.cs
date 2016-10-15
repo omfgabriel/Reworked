@@ -35,6 +35,7 @@
             try
             {
                 this.LoadSpells(new List<ISpell>() { new SpellR(), new SpellE(), new SpellQ(), new SpellW() });
+                Misc.SpellE = new SpellE();
             }
             catch (Exception e)
             {
@@ -56,25 +57,30 @@
         /// <param name="args"></param>
         private void OnDash(Obj_AI_Base sender, Dash.DashItem args)
         {
-            if (!sender.IsEnemy)
+            try
             {
-                return;
-            }
-
-            var eSpell = new SpellE();
-            var distance = ObjectManager.Player.Distance(sender);
-
-            if (MyMenu.RootMenu.Item("interrupt.e.dash").IsActive()
-                && MyMenu.RootMenu.Item("interrupt.e.dash.mana").GetValue<Slider>().Value
-                <= ObjectManager.Player.ManaPercent)
-            {
-                if (eSpell.SpellSlot.IsReady())
+                if (!sender.IsEnemy)
                 {
-                    if (!args.IsBlink && eSpell.Range <= distance)
+                    return;
+                }
+
+                if (MyMenu.RootMenu.Item("interrupt.e.dash").IsActive()
+                    && MyMenu.RootMenu.Item("interrupt.e.dash.mana").GetValue<Slider>().Value
+                    <= ObjectManager.Player.ManaPercent)
+                {
+                    if (Misc.SpellE.SpellSlot.IsReady())
                     {
-                        eSpell.SpellObject.Cast();
+                        if (!args.IsBlink && Misc.SpellE.Range <= ObjectManager.Player.Distance(sender))
+                        {
+                            Misc.SpellE.SpellObject.Cast();
+                        }
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                Logging.AddEntry(LoggingEntryTrype.Error, "@SpellManager.cs: OnDash - {0}", e);
+                throw;
             }
         }
 
@@ -86,17 +92,16 @@
         {
             try
             {
-                var eSpell = new SpellE();
-                if (!gapcloser.Sender.IsValidTarget(eSpell.Range))
+                if (!gapcloser.Sender.IsValidTarget(Misc.SpellE.Range))
                 {
                     return;
                 }
 
                 if (MyMenu.RootMenu.Item("gapcloser.e").IsActive())
                 {
-                    if (eSpell.SpellSlot.IsReady())
+                    if (Misc.SpellE.SpellSlot.IsReady())
                     {
-                        eSpell.SpellObject.Cast(gapcloser.Sender);
+                        Misc.SpellE.SpellObject.Cast(gapcloser.Sender);
                     }
                 }
             }
@@ -114,18 +119,18 @@
         /// <param name="args"></param>
         private void OnInterruptableTarget(Obj_AI_Hero sender, Interrupter2.InterruptableTargetEventArgs args)
         {
-            if (args.DangerLevel != Interrupter2.DangerLevel.High)
-            {
-                return;
-            }
             try
             {
-                var eSpell = new SpellE();
+                if (args.DangerLevel != Interrupter2.DangerLevel.High)
+                {
+                    return;
+                }
+
                 if (MyMenu.RootMenu.Item("interrupt.e").IsActive())
                 {
-                    if (eSpell.SpellSlot.IsReady() && eSpell.SpellObject.IsInRange(sender))
+                    if (Misc.SpellE.SpellSlot.IsReady() && Misc.SpellE.SpellObject.IsInRange(sender))
                     {
-                        eSpell.SpellObject.Cast(sender);
+                        Misc.SpellE.SpellObject.Cast(sender);
                     }
                 }
             }

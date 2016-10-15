@@ -3,6 +3,7 @@
     using System;
     using System.Linq;
 
+    using ElDianaRevamped.Components.Spells;
     using ElDianaRevamped.Enumerations;
 
     using LeagueSharp;
@@ -14,6 +15,10 @@
     internal static class Misc
     {
         #region Methods
+        /// <summary>
+        ///     Spell E
+        /// </summary>
+        public static SpellE SpellE;
 
         /// <summary>
         ///     Gets a target from the common target selector.

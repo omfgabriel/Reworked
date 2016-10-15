@@ -80,6 +80,11 @@
                 {
                     if (MyMenu.RootMenu.Item("combousersolo").IsActive())
                     {
+                        if (!MyMenu.RootMenu.Item("combo" + target.CharData.BaseSkinName + "use").IsActive())
+                        {
+                            return;
+                        }
+
                         if (target.HealthPercent
                             < MyMenu.RootMenu.Item("combor.count.solo").GetValue<Slider>().Value)
                         {
@@ -100,7 +105,7 @@
                                                 target.Position,
                                                 ObjectManager.Player.Distance(target) / 2f)) <= MyMenu.RootMenu.Item("combor.r.enmies.range").GetValue<Slider>().Value);
 
-                            if (alliesCount > MyMenu.RootMenu.Item("combor.count.allies").GetValue<Slider>().Value || enemiesCount > MyMenu.RootMenu.Item("combor.count.enemies").GetValue<Slider>().Value || !MyMenu.RootMenu.Item("combo" + target.CharData.BaseSkinName + "use").IsActive())
+                            if (alliesCount > MyMenu.RootMenu.Item("combor.count.allies").GetValue<Slider>().Value || enemiesCount > MyMenu.RootMenu.Item("combor.count.enemies").GetValue<Slider>().Value)
                             {
                                 return;
                             }

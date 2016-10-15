@@ -83,6 +83,14 @@
                         if (target.HealthPercent
                             < MyMenu.RootMenu.Item("combor.count.solo").GetValue<Slider>().Value)
                         {
+
+                            var alliesCount = 
+                                HeroManager.Allies.Count(
+                                    a => a.IsValid && !a.IsDead && !a.IsMe
+                                        && a.Distance(ObjectManager.Player.Position.Extend(
+                                                target.Position,
+                                                ObjectManager.Player.Distance(target) / 2f)) <= MyMenu.RootMenu.Item("combor.r.allies.range").GetValue<Slider>().Value);
+
                             var enemiesCount =
                                 HeroManager.Enemies.Count(
                                     h =>
@@ -92,7 +100,7 @@
                                                 target.Position,
                                                 ObjectManager.Player.Distance(target) / 2f)) <= MyMenu.RootMenu.Item("combor.r.enmies.range").GetValue<Slider>().Value);
 
-                            if (enemiesCount > MyMenu.RootMenu.Item("combor.count.enemies").GetValue<Slider>().Value && !MyMenu.RootMenu.Item("combo" + target.CharData.BaseSkinName + "use").IsActive())
+                            if (alliesCount > MyMenu.RootMenu.Item("combor.count.allies").GetValue<Slider>().Value || enemiesCount > MyMenu.RootMenu.Item("combor.count.enemies").GetValue<Slider>().Value || !MyMenu.RootMenu.Item("combo" + target.CharData.BaseSkinName + "use").IsActive())
                             {
                                 return;
                             }

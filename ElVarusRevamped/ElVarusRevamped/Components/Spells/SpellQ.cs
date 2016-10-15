@@ -106,8 +106,7 @@
                 {
                    if (this.SpellObject.IsCharging ||
                         this.SpellObject.IsKillable(target) ||
-                        target.Distance(ObjectManager.Player) > Orbwalking.GetRealAutoAttackRange(target) * 1.2f ||
-                        MyMenu.RootMenu.Item("comboqalways").IsActive() ||
+                        MyMenu.RootMenu.Item("comboqalways").IsActive() || target.Distance(ObjectManager.Player) > Orbwalking.GetRealAutoAttackRange(target) * 1.2f ||
                         (Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("combow.count").GetValue<Slider>().Value))
                     {
                         if (!this.SpellObject.IsCharging)
@@ -117,12 +116,23 @@
 
                         if (this.SpellObject.IsCharging)
                         {
-                            this.SpellObject.Cast(target);
+                            if (MyMenu.RootMenu.Item("castmode").GetValue<StringList>().SelectedIndex == 0)
+                            {
+                                this.SpellObject.Cast(target);
+                            }
+                            else
+                            {
+                                var prediction = this.SpellObject.GetPrediction(target);
+                                if (prediction.Hitchance >= HitChance.High)
+                                {
+                                    this.SpellObject.Cast(prediction.CastPosition);
+                                }
+                            }
                         }
 
                         if (this.SpellObject.IsCharging)
                         {
-                            if (target.Distance(ObjectManager.Player) < this.Range + 250)
+                            if (target.Distance(ObjectManager.Player) < this.Range)
                             {
                                 this.SpellObject.Cast(target);
                             }

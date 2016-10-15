@@ -66,16 +66,17 @@
 
                     if (spellSlotNameLower.Equals("q", StringComparison.InvariantCultureIgnoreCase))
                     {
+                        nodeCombo.AddItem(new MenuItem("castmode", "Q mode").SetValue(new StringList(new[] { "Target", "Predicted (HIGH)" }, 0)));
                         nodeCombo.AddItem(new MenuItem("forceqalways", "Force target with W stacks").SetValue(true));
                         nodeCombo.AddItem(new MenuItem("comboqalways", "Always use " + spellSlotName).SetValue(true));
-                        nodeCombo.AddItem(new MenuItem("combow.count", "Minimum W stacks").SetValue(new Slider(3, 1, 3)));
+                        nodeCombo.AddItem(new MenuItem("combow.count", "Minimum W stacks").SetValue(new Slider(3, 0, 3)));
                         nodeCombo.AddItem(new MenuItem("comboq.fast", "Fast Q min health").SetValue(new Slider(20)));
                     }
 
                     if (spellSlotNameLower.Equals("e", StringComparison.InvariantCultureIgnoreCase))
                     {
                         nodeCombo.AddItem(new MenuItem("comboealways", "Always use " + spellSlotName).SetValue(true));
-                        nodeCombo.AddItem(new MenuItem("comboew.count", "Minimum W stacks").SetValue(new Slider(3, 1, 3)));
+                        nodeCombo.AddItem(new MenuItem("comboew.count", "Minimum W stacks").SetValue(new Slider(3, 0, 3)));
                         nodeCombo.AddItem(new MenuItem("comboe.count.hit", "Enemies hit").SetValue(new Slider(2, 1, 5)));
                     }
 
@@ -88,6 +89,10 @@
                         nodeCombo.AddItem(new MenuItem("combo.separator", String.Empty));
                         nodeCombo.AddItem(new MenuItem("combousermultiple", "Use " + spellSlotName + " AoE").SetValue(true));
                         nodeCombo.AddItem(new MenuItem("combor.count", "Minimum enemies hit with R").SetValue(new Slider(3, 1, 5)));
+                        // new
+                        nodeCombo.AddItem(new MenuItem("combor.count.allies", "Max allies in range").SetValue(new Slider(3, 1, 5)));
+                        nodeCombo.AddItem(new MenuItem("combor.r.allies.range", "Allies range").SetValue(new Slider(1750, 500, 2500)));
+                        //new
                         nodeCombo.AddItem(new MenuItem("combor.r.radius", "R spread radius").SetValue(new Slider(500, 120, 600)));
                         nodeCombo.AddItem(new MenuItem("combor.r.enmies.range", "Enemies range").SetValue(new Slider(1750, 500, 2500)));
                         nodeCombo.AddItem(new MenuItem("combo.separator-3", String.Empty));
@@ -159,12 +164,17 @@
                     node.AddSubMenu(nodeLaneClear);
                 }
 
-                if (spellSlotNameLower.Equals("e", StringComparison.InvariantCultureIgnoreCase))
+                if (!spellSlotNameLower.Equals("r", StringComparison.InvariantCultureIgnoreCase))
                 {
                     var nodeMisc = new Menu("Miscellaneous", spellSlotNameLower + "miscmenu");
                     {
-                        nodeMisc.AddItem(
-                            new MenuItem("gapclosereuse", "Use " + spellSlotName + " for gapclosers").SetValue(true));
+                        nodeMisc.AddItem(new MenuItem("killsteal" + spellSlotNameLower + "use", "Use " + spellSlotName + " to killsteal").SetValue(false));
+                        nodeMisc.AddItem(new MenuItem("killsteal" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(5)));
+
+                        if (spellSlotNameLower.Equals("e", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            nodeMisc.AddItem(new MenuItem("gapclosereuse", "Use " + spellSlotName + " for gapclosers").SetValue(true));
+                        }
                     }
 
                     node.AddSubMenu(nodeMisc);

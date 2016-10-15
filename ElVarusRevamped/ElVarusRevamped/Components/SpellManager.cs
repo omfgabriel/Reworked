@@ -169,7 +169,56 @@
             this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.LastHit))
                         .ToList()
                         .ForEach(spell => spell.OnLastHit());
+
+            this.Killsteal();
         }
+
+        /// <summary>
+        ///     The killsteal method.
+        ///     Disabled for now, need to fix stuff first.
+        /// </summary>
+        private void Killsteal()
+        {
+            if (MyMenu.RootMenu.Item("killstealquse").IsActive() && Misc.SpellQ.SpellSlot.IsReady())
+            {
+                var killableEnemy =
+                    HeroManager.Enemies.FirstOrDefault(e => Misc.SpellQ.SpellObject.IsKillable(e) && !Orbwalking.InAutoAttackRange(e) && e.IsValidTarget(Misc.SpellQ.SpellObject.ChargedMaxRange)
+                                && ObjectManager.Player.ManaPercent
+                                > MyMenu.RootMenu.Item("killstealqmana").GetValue<Slider>().Value);
+
+                if (killableEnemy != null)
+                {
+                    if (!Misc.SpellQ.SpellObject.IsCharging)
+                    {
+                        Misc.SpellQ.SpellObject.StartCharging();
+                    }
+
+                    if (Misc.SpellQ.SpellObject.IsCharging)
+                    {
+                        Misc.SpellQ.SpellObject.Cast(killableEnemy);
+                    }
+                }
+            }
+
+            if (MyMenu.RootMenu.Item("killstealeuse").IsActive() && Misc.SpellE.SpellSlot.IsReady())
+            {
+                if (Misc.SpellE.SpellObject.IsCharging)
+                {
+                    return;
+                }
+
+                var killableEnemy =
+                    HeroManager.Enemies.FirstOrDefault(e => Misc.SpellE.SpellObject.IsKillable(e) && !Orbwalking.InAutoAttackRange(e) && e.IsValidTarget(Misc.SpellE.Range + Misc.SpellE.Width)
+                            && ObjectManager.Player.ManaPercent
+                            > MyMenu.RootMenu.Item("killstealemana").GetValue<Slider>().Value);
+
+                if (killableEnemy != null)
+                {
+                    Misc.SpellE.SpellObject.Cast(killableEnemy.Position);
+                }
+            }
+        }
+
 
         /// <summary>
         ///     The load spells method.

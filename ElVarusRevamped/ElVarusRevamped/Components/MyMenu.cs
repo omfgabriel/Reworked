@@ -87,8 +87,6 @@
                         nodeCombo.SubMenu("1v1 settings").AddItem(new MenuItem("combor.count.allies", "Maximum allies in range").SetValue(new Slider(3, 1, 5)));
                         nodeCombo.SubMenu("1v1 settings").AddItem(new MenuItem("combor.r.allies.range", "Allies range check").SetValue(new Slider(1750, 500, 2500)));
                         nodeCombo.SubMenu("1v1 settings").AddItem(new MenuItem("combor.r.enemies.range", "Enemies range check").SetValue(new Slider(1750, 500, 2500)));
-
-                        nodeCombo.AddItem(new MenuItem("combo.separator-2", String.Empty));
                         nodeCombo.AddItem(new MenuItem("combousersolo", "Use " + spellSlotName + " solo").SetValue(true));
                      
                         nodeCombo.AddItem(new MenuItem("combo.separator", String.Empty));
@@ -172,14 +170,15 @@
                         nodeMisc.AddItem(new MenuItem("killsteal" + spellSlotNameLower + "use", "Use " + spellSlotName + " to killsteal").SetValue(false));
                         nodeMisc.AddItem(new MenuItem("killsteal" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(5)));
 
-                        foreach (var enemy in HeroManager.Enemies)
-                        {
-                            nodeCombo.AddItem(new MenuItem("gapcloser" + enemy.CharData.BaseSkinName + "use", "Gapcloser: " + enemy.CharData.BaseSkinName).SetValue(true));
-                        }
-
                         if (spellSlotNameLower.Equals("e", StringComparison.InvariantCultureIgnoreCase))
                         {
                             nodeMisc.AddItem(new MenuItem("gapclosereuse", "Use " + spellSlotName + " for gapclosers").SetValue(true));
+                            nodeMisc.AddItem(new MenuItem("combo.separator-2", String.Empty));
+
+                            foreach (var enemy in HeroManager.Enemies)
+                            {
+                                nodeMisc.AddItem(new MenuItem("gapcloser" + enemy.CharData.BaseSkinName + "use", "Gapcloser: " + enemy.CharData.BaseSkinName).SetValue(true));
+                            }
                         }
                     }
 

@@ -50,6 +50,7 @@
 
         #region Methods
 
+
         /// <summary>
         ///     The generate spell menu method.
         /// </summary>
@@ -65,18 +66,35 @@
 
                 var node = new Menu(spellSlot + " Settings", "spellmenu" + spellSlotNameLower);
 
-                var nodeCombo = new Menu("Combo", spellSlotNameLower + "combomenu");
+                if (!spellSlotNameLower.Equals("e", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    nodeCombo.AddItem(new MenuItem("combo" + spellSlotNameLower + "use", "Use " + spellSlotName).SetValue(true));
-                    nodeCombo.AddItem(new MenuItem("combo" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(5)));
-
-                    if (spellSlotNameLower.Equals("w", StringComparison.InvariantCultureIgnoreCase))
+                    var nodeCombo = new Menu("Combo", spellSlotNameLower + "combomenu");
                     {
-                        nodeCombo.AddItem(new MenuItem("combominionuse", "Eat minion").SetValue(false));
+                        nodeCombo.AddItem(
+                            new MenuItem("combo" + spellSlotNameLower + "use", "Use " + spellSlotName).SetValue(true));
+                        nodeCombo.AddItem(
+                            new MenuItem("combo" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(5)));
+
+                        if (spellSlotNameLower.Equals("w", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            nodeCombo.AddItem(new MenuItem("combominionuse", "Eat minion").SetValue(false));
+                        }
                     }
+
+                    node.AddSubMenu(nodeCombo);
                 }
 
-                node.AddSubMenu(nodeCombo);
+                if (spellSlotNameLower.Equals("e", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    var nodeShield = new Menu("Shield", spellSlotNameLower + "shieldmenu");
+                    {
+                        nodeShield.AddItem(new MenuItem("shield" + spellSlotNameLower + "use", "Use " + spellSlotName).SetValue(true));
+                        nodeShield.AddItem(new MenuItem("ehealthpercentage", "Use " + spellSlotName + " on health percentage").SetValue(new Slider(20)));
+                        nodeShield.AddItem(new MenuItem("shield" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(5)));
+                    }
+
+                    node.AddSubMenu(nodeShield);
+                }
 
                 if (!spellSlotNameLower.Equals("e", StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -92,13 +110,16 @@
                     node.AddSubMenu(nodeMixed);
                 }
 
-
                 if (spellSlotNameLower.Equals("w", StringComparison.InvariantCultureIgnoreCase))
                 {
                     var nodeAlly = new Menu("Ally settings", spellSlotNameLower + "allymenu");
                     {
                         nodeAlly.AddItem(new MenuItem("allydangerousults", "Use " + spellSlotName + " on dangerous ults").SetValue(true));
-
+                        nodeAlly.AddItem(new MenuItem("walktotarget", "Orbwalk to target").SetValue(true));
+                        nodeAlly.AddItem(new MenuItem("sep3-0-2", String.Empty));
+                        nodeAlly.AddItem(new MenuItem("allylowhpults", "Use " + spellSlotName + " on low HP allies").SetValue(true));
+                        nodeAlly.AddItem(new MenuItem("allylowhpultsslider", "Use " + spellSlotName + " Ally Health percentage").SetValue(new Slider(20)));
+                        nodeAlly.AddItem(new MenuItem("sep3-2", String.Empty));
                         nodeAlly.AddItem(new MenuItem("allycc", "Use " + spellSlotName + " when ally is cc'd").SetValue(true));
 
                         foreach (var buffType in Misc.DevourerBuffTypes.Select(x => x.ToString()))
@@ -114,7 +135,6 @@
                                 .SetValue(true);
                         }
                     }
-
 
                     node.AddSubMenu(nodeAlly);
                 }

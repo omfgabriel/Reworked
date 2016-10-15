@@ -24,7 +24,7 @@
         /// <summary>
         ///     The spells.
         /// </summary>
-        private readonly List<ISpell> spells = new List<ISpell>();
+        internal readonly List<ISpell> spells = new List<ISpell>();
 
         /// <summary>
         ///     Gets or sets the leaguesharp.data spells.
@@ -32,13 +32,12 @@
         /// <value>
         ///     The spells.
         /// </value>
-        private List<SpellDatabaseEntry> Spells { get; } = new List<SpellDatabaseEntry>();
+        internal List<SpellDatabaseEntry> Spells { get; } = new List<SpellDatabaseEntry>();
 
         /// <summary>
         ///     Gets or sets the champion spells.
         /// </summary>
-        private Dictionary<string, List<SpellSlot>> ChampionSpells { get; } = new Dictionary<string, List<SpellSlot>>();
-
+        internal Dictionary<string, List<SpellSlot>> ChampionSpells { get; } = new Dictionary<string, List<SpellSlot>>();
 
         #endregion
 
@@ -70,6 +69,7 @@
                 {
                     var spellName = source;
                     this.Spells.Add(Data.Get<SpellDatabase>().Spells.First(x => x.SpellName.Equals(source)));
+                    Logging.AddEntry(LoggingEntryType.Info, "Loaded spells: {0}", spellName);
                     if (!dangerousSpells.Contains(spellName))
                     {
                         continue;
@@ -105,28 +105,42 @@
         /// <param name="args">The <see cref="GameObjectProcessSpellCastEventArgs" /> instance containing the event data.</param>
         private void ObjAiBaseOnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
-            if (!sender.IsEnemy)
+            try
             {
-                return;
+                if (!sender.IsEnemy)
+                {
+                    return;
+                }
+
+                var spellW = new SpellW();
+                if (!args.Target.IsValid<Obj_AI_Hero>() || args.Target.IsEnemy || args.Target.IsMe || !spellW.SpellObject.IsInRange(args.Target))
+                {
+                    return;
+                }
+
+                var target = (Obj_AI_Hero)args.Target;
+
+                if (!MyMenu.RootMenu.Item("allydangerousults").IsActive())
+                {
+                    return;
+                }
+
+                // todo : Generate menu items to toggle spells [optional].
+                if (!this.Spells.Any(x => x.SpellName.Equals(args.SData.Name, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    return;
+                }
+
+                if (spellW.SpellSlot.IsReady() && spellW.SpellObject.IsInRange(target) && !target.IsMe)
+                {
+                    spellW.SpellObject.CastOnUnit(target);
+                    Logging.AddEntry(LoggingEntryType.Debug, "@SpellManager.cs: ObjAiBaseOnProcessSpellCast");
+                }
             }
-
-            if (!args.Target.IsValid<Obj_AI_Hero>() || args.Target.IsEnemy)
+            catch (Exception e)
             {
-                return;
-            }
-
-            // todo : Generate menu items to toggle spells [optional].
-            if (!this.Spells.Any(x => x.SpellName.Equals(args.SData.Name, StringComparison.InvariantCultureIgnoreCase) || !MyMenu.RootMenu.Item("allydangerousults").IsActive()))
-            {
-                return;
-            }
-
-            var target = (Obj_AI_Hero)args.Target;
-            var spellW = new SpellW();
-
-            if (spellW.SpellSlot.IsReady() && ObjectManager.Player.Distance(target) < spellW.Range)
-            {
-                spellW.SpellObject.CastOnUnit(target);
+                Logging.AddEntry(LoggingEntryType.Error, "@SpellManager.cs: ObjAiBaseOnProcessSpellCast: {0}", e);
+                throw;
             }
         }
 
@@ -141,14 +155,22 @@
         /// </param>
         private void OnBuffRemove(Obj_AI_Base sender, Obj_AI_BaseBuffRemoveEventArgs args)
         {
-            if (!sender.IsMe)
+            try
             {
-                return;
-            }
+                if (!sender.IsMe)
+                {
+                    return;
+                }
 
-            if (args.Buff.Name.Equals(Misc.DevouredBuffName))
+                if (args.Buff.Name.Equals(Misc.DevouredBuffName))
+                {
+                    Misc.LastDevouredType = DevourType.None;
+                }
+            }
+            catch (Exception e)
             {
-                Misc.LastDevouredType = DevourType.None;
+                Logging.AddEntry(LoggingEntryType.Error, "@SpellManager.cs: OnBuffRemove: {0}", e);
+                throw;
             }
         }
 
@@ -163,20 +185,28 @@
         /// </param>
         private void OnBuffAdd(Obj_AI_Base sender, Obj_AI_BaseBuffAddEventArgs args)
         {
-            if (args.Buff.Name.Equals(Misc.DevouredCastBuffName))
+            try
             {
-                var hero = sender as Obj_AI_Hero;
-                if (hero != null)
+                if (args.Buff.Name.Equals(Misc.DevouredCastBuffName))
                 {
-                    Misc.LastDevouredType = hero.IsAlly ? DevourType.Ally : DevourType.Enemy;
-                    return;
-                }
+                    var hero = sender as Obj_AI_Hero;
+                    if (hero != null)
+                    {
+                        Misc.LastDevouredType = hero.IsAlly ? DevourType.Ally : DevourType.Enemy;
+                        return;
+                    }
 
-                var minion = sender as Obj_AI_Minion;
-                if (minion != null)
-                {
-                    Misc.LastDevouredType = DevourType.Minion;
+                    var minion = sender as Obj_AI_Minion;
+                    if (minion != null)
+                    {
+                        Misc.LastDevouredType = DevourType.Minion;
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                Logging.AddEntry(LoggingEntryType.Error, "@SpellManager.cs: OnBuffAdd: {0}", e);
+                throw;
             }
         }
 
@@ -209,7 +239,8 @@
                 var spellSlotNameLower = spellSlot.ToString().ToLower();
 
                 if ((orbwalkerModeLower.Equals("lasthit")
-                    && (!spellSlotNameLower.Equals("q"))) || (orbwalkerModeLower.Equals("mixed") && (spellSlotNameLower.Equals("e"))))
+                    && (!spellSlotNameLower.Equals("q"))) || (orbwalkerModeLower.Equals("mixed") && (spellSlotNameLower.Equals("e"))
+                    || (orbwalkerModeLower.Equals("combo") && (spellSlotNameLower.Equals("e")))))
                 {
                     return false;
                 }
@@ -234,7 +265,7 @@
         /// </param>
         private void Game_OnUpdate(EventArgs args)
         {
-            if (ObjectManager.Player.IsDead || MenuGUI.IsChatOpen || MenuGUI.IsShopOpen) return;
+            if (ObjectManager.Player.IsDead || MenuGUI.IsChatOpen || MenuGUI.IsShopOpen || ObjectManager.Player.IsRecalling() || ObjectManager.Player.InFountain()) return;
 
             this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.Combo))
                 .ToList()

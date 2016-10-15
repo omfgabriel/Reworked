@@ -41,8 +41,11 @@
         /// <summary>
         ///     Gets the range.
         /// </summary>
-        internal override float Range => Misc.HasDevouredBuff && Misc.LastDevouredType == DevourType.Minion ? 700f : 250f;
-
+        internal override float Range
+            =>
+            Misc.HasDevouredBuff && Misc.LastDevouredType == DevourType.Minion
+                ? 700f
+                : 250f;
         /// <summary>
         ///     Gets or sets the skillshot type.
         /// </summary>
@@ -79,43 +82,50 @@
         {
             try
             {
-                var target = Misc.GetTarget(this.Range, this.DamageType);
-                if (target != null)
-                {
-                    if (Misc.GetPassiveStacks(target) == 3 && ObjectManager.Player.Distance(target) <= this.Range)
-                    {
-                        if (target.IsValidTarget(this.Range))
-                        {
-                            this.SpellObject.CastOnUnit(target);
-                        }
-                    }
-                    else
-                    {
-                        // test
-                        if (MyMenu.RootMenu.Item("combominionuse").IsActive())
-                        {
-                            if (!target.IsValidTarget(this.Range + 400) || Misc.HasDevouredBuff) // 650
-                            {
-                                return;
-                            }
+                var target = HeroManager.Enemies.Where(x => x.IsValidTarget(this.Range) && Misc.GetPassiveStacks(x) == 3 && (!x.IsInvulnerable || !x.MagicImmune))
+                    .OrderBy(obj => obj.Distance(ObjectManager.Player.ServerPosition))
+                    .FirstOrDefault();
 
+                if (target == null)
+                {
+                    return;
+                }
+
+                if (ObjectManager.Player.Distance(target) + target.BoundingRadius <= this.Range + ObjectManager.Player.BoundingRadius && Misc.LastDevouredType == DevourType.None)
+                {
+                    // THIS IS PURE PANIC!!!
+                    Hud.SelectedUnit = (Obj_AI_Hero)target;
+                    this.SpellObject.CastOnUnit((Obj_AI_Hero)target);
+                }
+                else
+                {
+                    if (MyMenu.RootMenu.Item("combominionuse").IsActive())
+                    {
+                        if (!target.IsValidTarget(this.Range + 400) || (Misc.HasDevouredBuff && Misc.LastDevouredType != DevourType.Minion))
+                        {
+                            return;
+                        }
+
+                        // Check if the Player does not have the devourer buff.
+                        if (!Misc.HasDevouredBuff)
+                        {
                             // Get the minions in range
                             var minion = MinionManager.GetMinions(this.Range, team: MinionTeam.NotAlly).Where(n => !n.CharData.Name.ToLower().Contains("spiderling")).OrderBy(obj => obj.Distance(ObjectManager.Player.ServerPosition)).FirstOrDefault();
-                            // check if there are any minions.
+                            // Check if there are any minions.
                             if (minion != null)
                             {
                                 // Cast W on the minion.
                                 this.SpellObject.CastOnUnit(minion);
-                                // Check if player has the devoured buff and that the last devoured type is a minion.
-                                if (Misc.HasDevouredBuff && Misc.LastDevouredType == DevourType.Minion)
-                                {
-                                    var prediction = this.SpellObject.GetPrediction(target);
-                                    if (prediction.Hitchance >= HitChance.High)
-                                    {
-                                        // Spit the minion to the target location.
-                                        this.SpellObject.Cast(prediction.CastPosition);
-                                    }
-                                }
+                            }
+                        }
+                        // Check if player has the devoured buff and that the last devoured type is a minion.
+                        else if (Misc.HasDevouredBuff && Misc.LastDevouredType == DevourType.Minion)
+                        {
+                            var prediction = this.SpellObject.GetPrediction(target);
+                            if (prediction.Hitchance >= HitChance.High)
+                            {
+                                // Spit the minion to the target location.
+                                this.SpellObject.Cast(prediction.CastPosition);
                             }
                         }
                     }
@@ -133,25 +143,58 @@
         /// </summary>
         internal override void OnUpdate()
         {
-            if (!MyMenu.RootMenu.Item("allycc").IsActive() && !this.ComboModeActive)
+            if (!this.SpellSlot.IsReady())
             {
                 return;
             }
 
-            foreach (var ally in HeroManager.Allies.Where(a => a.IsValidTarget(this.Range + 100, false) && !a.IsMe))
+            if (MyMenu.RootMenu.Item("allylowhpults").IsActive())
+            {
+                foreach (var ally in HeroManager.Allies.Where(a => a.Distance(ObjectManager.Player) < 500f && !a.IsDead && !a.IsZombie && !a.IsMe))
+                {
+                    if (ObjectManager.Player.CountEnemiesInRange(900f) > 0 && ally.HealthPercent <= MyMenu.RootMenu.Item("allylowhpultsslider").GetValue<Slider>().Value)
+                    {
+                        if (MyMenu.RootMenu.Item("walktotarget").IsActive())
+                        {
+                            ObjectManager.Player.IssueOrder(GameObjectOrder.MoveTo, ally.ServerPosition);
+                        }
+
+                        if (this.SpellObject.IsInRange(ally))
+                        {
+                            this.SpellObject.CastOnUnit(ally);
+                        }
+                    }
+                }
+            }
+
+            if (!MyMenu.RootMenu.Item("allycc").IsActive())
+            {
+                return;
+            }
+
+            foreach (var ally in HeroManager.Allies.Where(a => a.Distance(ObjectManager.Player) < 500f && !a.IsMe))
             {
                 foreach (var buff in
                     ally.Buffs.Where(
                         x =>
                             Misc.DevourerBuffTypes.Contains(x.Type) && x.Caster.Type == GameObjectType.obj_AI_Hero && x.Caster.IsEnemy))
                 {
-                    if (!MyMenu.RootMenu.Item($"buffscc{buff.Type}").IsActive() || !MyMenu.RootMenu.Item($"won{ally.ChampionName}").IsActive() || Misc.BuffIndexesHandled[ally.NetworkId].Contains(buff.Index))
+                    if (!MyMenu.RootMenu.Item($"buffscc{buff.Type}").IsActive() || !MyMenu.RootMenu.Item($"won{ally.ChampionName}").IsActive() || Misc.BuffIndexesHandled[ally.NetworkId].Contains(buff.Index) || !this.SpellSlot.IsReady())
                     {
                         continue;
                     }
 
                     Misc.BuffIndexesHandled[ally.NetworkId].Add(buff.Index);
-                    this.SpellObject.CastOnUnit(ally);
+                    if (MyMenu.RootMenu.Item("walktotarget").IsActive())
+                    {
+                        ObjectManager.Player.IssueOrder(GameObjectOrder.MoveTo, ally.ServerPosition);
+                    }
+
+                    if (this.SpellObject.IsInRange(ally))
+                    {
+                        this.SpellObject.CastOnUnit(ally);
+                    }
+
                     Misc.BuffIndexesHandled[ally.NetworkId].Remove(buff.Index);
                 }
             }
@@ -162,25 +205,31 @@
         /// </summary>
         internal override void OnMixed()
         {
-            var target = Misc.GetTarget(this.minionWRange, this.DamageType);
-            if (target != null)
+            // Check if the Player does not have the devourer buff.
+            if (!Misc.HasDevouredBuff)
             {
+                // Gets the minion in melee range.
                 var minion = MinionManager.GetMinions(this.Range, team: MinionTeam.NotAlly).OrderBy(obj => obj.Distance(ObjectManager.Player.ServerPosition)).FirstOrDefault();
                 // check if there are any minions.
                 if (minion != null)
                 {
                     // Cast W on the minion.
                     this.SpellObject.CastOnUnit(minion);
-                    // Check if player has the devoured buff and that the last devoured type is a minion.
-                    if (Misc.HasDevouredBuff && Misc.LastDevouredType == DevourType.Minion)
+                }
+            }
+            // Check if player has the devoured buff and that the last devoured type is a minion.
+            else if (Misc.HasDevouredBuff && Misc.LastDevouredType == DevourType.Minion)
+            {
+                var target =
+                    HeroManager.Enemies.FirstOrDefault(x => x.IsValidTarget(this.minionWRange));
+
+                if (target != null)
+                {
+                    var prediction = this.SpellObject.GetPrediction(target);
+                    if (prediction.Hitchance >= HitChance.High)
                     {
-                        var prediction = this.SpellObject.GetPrediction(target);
-                        Logging.AddEntry(LoggingEntryType.Debug, "Hitchance {0}", prediction.Hitchance);
-                        if (prediction.Hitchance >= HitChance.High)
-                        {
-                            // Spit the minion to the target location.
-                            this.SpellObject.Cast(prediction.CastPosition);
-                        }
+                        // Spit the minion to the target location.
+                        this.SpellObject.Cast(prediction.CastPosition);
                     }
                 }
             }

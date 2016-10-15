@@ -51,7 +51,7 @@
         {
             BuffType.Charm, BuffType.Flee,
             BuffType.Polymorph, BuffType.Silence, BuffType.Snare, BuffType.Stun,
-            BuffType.Taunt
+            BuffType.Taunt, BuffType.Fear, BuffType.Knockback, BuffType.Knockup
         };
 
         /// <summary>
@@ -62,31 +62,6 @@
         ///     <see cref="GetPassiveStacks" />
         /// </returns>
         internal static int GetPassiveStacks(Obj_AI_Hero target) => target.GetBuffCount("tahmkenchpdebuffcounter");
-
-        /// <summary>
-        ///     Gets a target from the common target selector.
-        /// </summary>
-        /// <param name="range">
-        ///     The range.
-        /// </param>
-        /// <param name="damageType">
-        ///     The damage type.
-        /// </param>
-        /// <returns>
-        ///     <see cref="Obj_AI_Hero" />
-        /// </returns>
-        internal static Obj_AI_Hero GetTarget(float range, TargetSelector.DamageType damageType)
-        {
-            try
-            {
-                return TargetSelector.GetTarget(range, damageType);
-            }
-            catch (Exception e)
-            {
-                Logging.AddEntry(LoggingEntryType.Error, "@Misc.cs: Can not return target - {0}", e);
-                throw;
-            }
-        }
 
         #endregion
     }

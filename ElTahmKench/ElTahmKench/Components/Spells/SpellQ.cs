@@ -36,7 +36,7 @@
         /// <summary>
         ///     Gets the range.
         /// </summary>
-        internal override float Range => 950f;
+        internal override float Range => 800f + ObjectManager.Player.BoundingRadius;
 
         /// <summary>
         ///     Gets or sets the skillshot type.
@@ -56,7 +56,7 @@
         /// <summary>
         ///     Gets the width.
         /// </summary>
-        internal override float Width => 75f; // evade says 90f
+        internal override float Width => 70f;
 
         #endregion
 
@@ -69,12 +69,20 @@
         {
             try
             {
-                var target = Misc.GetTarget(this.Range + this.Width, this.DamageType);
+                var target = HeroManager.Enemies.Where(x => x.Distance(ObjectManager.Player) <= this.Range + x.BoundingRadius )
+                    .OrderBy(obj => obj.Distance(ObjectManager.Player.ServerPosition))
+                    .FirstOrDefault();
+
+                if (Misc.HasDevouredBuff && Misc.LastDevouredType == DevourType.Enemy) target = null;
                 if (target != null)
                 {
-                    if (target.IsValidTarget(this.Range + this.Width))
+                    if (ObjectManager.Player.Distance(target) <= this.Range)
                     {
-                        this.SpellObject.Cast(target);
+                        var prediction = this.SpellObject.GetPrediction(target);
+                        if (prediction.Hitchance >= HitChance.High)
+                        {
+                            this.SpellObject.Cast(prediction.CastPosition);
+                        }
                     }
                 }
             }

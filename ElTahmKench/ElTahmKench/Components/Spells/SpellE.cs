@@ -31,7 +31,7 @@
         /// <summary>
         ///     Gets the range.
         /// </summary>
-        internal override float Range => 0f;
+        internal override float Range => 900f;
 
         /// <summary>
         ///     Gets or sets the skillshot type.
@@ -57,31 +57,22 @@
 
         #region Methods
 
-        /// <summary>
-        ///     The on combo callback.
-        /// </summary>
-        internal override void OnCombo()
+        internal override void OnUpdate()
         {
-            try
+            if (!MyMenu.RootMenu.Item("shieldeuse").IsActive())
             {
-                var target = Misc.GetTarget(this.Range, this.DamageType);
-                if (target != null)
-                {
-                }
+                return;
             }
-            catch (Exception e)
-            {
-                Logging.AddEntry(LoggingEntryType.Error, "@SpellE.cs: Can not run OnCombo - {0}", e);
-                throw;
-            }
-        }
 
-        /// <summary>
-        ///     The on mixed callback.
-        /// </summary>
-        internal override void OnMixed()
-        {
-            this.OnCombo();
+            if (ObjectManager.Player.ManaPercent < MyMenu.RootMenu.Item("shieldemana").GetValue<Slider>().Value)
+            {
+                return;
+            }
+
+            if (ObjectManager.Player.HealthPercent <= MyMenu.RootMenu.Item("ehealthpercentage").GetValue<Slider>().Value && ObjectManager.Player.CountEnemiesInRange(this.Range) > 0)
+            {
+                this.SpellObject.Cast();
+            }
         }
 
         #endregion

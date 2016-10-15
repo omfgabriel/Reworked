@@ -40,8 +40,6 @@
                         this.Speed,
                         this.Collision,
                         this.SkillshotType);
-
-                    Logging.AddEntry(LoggingEntryType.Generic, "Spell initialization: Spellslot: {0} - Delay : {1} - Width: {2} - Speed: {3} - Collision: {4} - SkillshotType: {5}", this.SpellObject.Slot, this.Delay, this.Width, this.Speed, this.Collision, this.SkillshotType);
                 }
             }
             catch (Exception e)

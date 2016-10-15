@@ -23,6 +23,11 @@
         public static SpellW SpellW;
 
         /// <summary>
+        ///     Spell Q.
+        /// </summary>
+        public static SpellQ SpellQ;
+
+        /// <summary>
         ///     The last devoured target type
         /// </summary>
         internal static DevourType LastDevouredType;

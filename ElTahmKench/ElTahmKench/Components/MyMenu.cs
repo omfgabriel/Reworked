@@ -152,6 +152,19 @@
                     node.AddSubMenu(nodeLastHit);
                 }
 
+
+                if (spellSlotNameLower.Equals("q", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    var nodedraw = new Menu("Draw", spellSlotNameLower + "drawmenu");
+                    {
+                        nodedraw.AddItem(
+                            new MenuItem("draw" + spellSlotNameLower + "use", "Draw " + spellSlotName).SetValue(true));
+                    }
+
+                    node.AddSubMenu(nodedraw);
+                }
+
+
                 RootMenu.AddSubMenu(node);
             }
             catch (Exception e)

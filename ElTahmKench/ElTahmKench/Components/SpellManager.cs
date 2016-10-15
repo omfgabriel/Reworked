@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Drawing;
     using System.Linq;
 
     using ElTahmKench.Components.Spells;
@@ -13,7 +14,7 @@
 
     using LeagueSharp.Data;
     using LeagueSharp.Data.DataTypes;
-    
+
     /// <summary>
     ///     The spell manager.
     /// </summary>
@@ -50,8 +51,19 @@
         {
             try
             {
+
+                foreach (var spellData in ObjectManager.Player.Spellbook.Spells)
+                {
+                    Console.WriteLine("Spell name: " + spellData.SData.Name);
+                    Console.WriteLine("Spell width: " + spellData.SData.LineWidth);
+                    Console.WriteLine("Spell speed: " + spellData.SData.MissileSpeed);
+                    Console.WriteLine("Spell range: " + spellData.SData.CastRange);
+                }
+
                 this.LoadSpells(new List<ISpell>() { new SpellQ(), new SpellW(), new SpellE() });
                 Misc.SpellW = new SpellW();
+                Misc.SpellQ = new SpellQ();
+
                 HeroManager.Allies.ForEach(x => Misc.BuffIndexesHandled.Add(x.NetworkId, new List<int>()));
 
                 // Loads the dangerous ults from LeagueSharp.Data
@@ -93,10 +105,19 @@
                 throw;
             }
 
+            Drawing.OnDraw += OnDraw;
             Game.OnUpdate += this.Game_OnUpdate;
             Obj_AI_Base.OnBuffAdd += this.OnBuffAdd;
             Obj_AI_Base.OnBuffRemove += this.OnBuffRemove;
             Obj_AI_Base.OnProcessSpellCast += this.ObjAiBaseOnProcessSpellCast;
+        }
+
+        private static void OnDraw(EventArgs args)
+        {
+            if (MyMenu.RootMenu.Item("drawquse").IsActive() && Misc.SpellQ.SpellObject.Level > 0)
+            {
+                Render.Circle.DrawCircle(ObjectManager.Player.Position, Misc.SpellQ.Range, Color.DeepSkyBlue);
+            }
         }
 
         /// <summary>

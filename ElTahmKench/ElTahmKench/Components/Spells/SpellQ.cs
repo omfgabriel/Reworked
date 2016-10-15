@@ -36,7 +36,7 @@
         /// <summary>
         ///     Gets the range.
         /// </summary>
-        internal override float Range => 800f + ObjectManager.Player.BoundingRadius;
+        internal override float Range => 800f;
 
         /// <summary>
         ///     Gets or sets the skillshot type.
@@ -46,7 +46,7 @@
         /// <summary>
         ///     Gets the speed.
         /// </summary>
-        internal override float Speed => 2800f;
+        internal override float Speed => 2000f;
 
         /// <summary>
         ///     Gets the spell slot.

@@ -85,8 +85,8 @@
                         nodeCombo.SubMenu("1v1 settings").AddItem(new MenuItem("combor.count.solo", "Enemy minimum health percentage").SetValue(new Slider(35)));
                         nodeCombo.SubMenu("1v1 settings").AddItem(new MenuItem("combor.count.enemies", "Maximum enemies in range").SetValue(new Slider(2, 1, 5)));
                         nodeCombo.SubMenu("1v1 settings").AddItem(new MenuItem("combor.count.allies", "Maximum allies in range").SetValue(new Slider(3, 1, 5)));
-                        nodeCombo.SubMenu("1v1 settings").AddItem(new MenuItem("combor.r.allies.range", "Allies range check").SetValue(new Slider(1750, 500, 2500)));
-                        nodeCombo.SubMenu("1v1 settings").AddItem(new MenuItem("combor.r.enemies.range", "Enemies range check").SetValue(new Slider(1750, 500, 2500)));
+                        nodeCombo.SubMenu("1v1 settings").AddItem(new MenuItem("combor.r.allies.range", "Allies range check").SetValue(new Slider(750, 500, 2500)));
+                        nodeCombo.SubMenu("1v1 settings").AddItem(new MenuItem("combor.r.enemies.range", "Enemies range check").SetValue(new Slider(1200, 500, 2500)));
 
                         nodeCombo.SubMenu("1v1 settings")
                             .AddItem(new MenuItem("combo.separator-23", "R WHITELIST - #BLM"))

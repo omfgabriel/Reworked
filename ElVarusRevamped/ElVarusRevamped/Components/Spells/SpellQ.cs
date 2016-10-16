@@ -167,6 +167,7 @@
             if (target != null)
             {
                 if (this.SpellObject.IsCharging ||
+					target.Distance(ObjectManager.Player) > Orbwalking.GetRealAutoAttackRange(target) * 1.2f ||
                     MyMenu.RootMenu.Item("mixedqusealways").IsActive() ||
                     Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("mixedqusealways.count").GetValue<Slider>().Value)
                 {
@@ -177,8 +178,20 @@
 
                     if (this.SpellObject.IsCharging)
                     {
-                        this.SpellObject.Cast(target);
+                        var prediction = this.SpellObject.GetPrediction(target);
+                        if (prediction.Hitchance >= HitChance.VeryHigh)
+                                {
+                                    this.SpellObject.Cast(prediction.CastPosition);
+                                }
                     }
+					
+					if (this.SpellObject.IsCharging)
+                        {
+                            if (target.Distance(ObjectManager.Player) < this.Range)
+                            {
+                                this.SpellObject.Cast(target);
+                            }
+                        }
                 }
             }
         }

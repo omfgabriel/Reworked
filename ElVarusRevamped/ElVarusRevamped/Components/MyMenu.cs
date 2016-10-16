@@ -23,7 +23,7 @@
         /// </summary>
         internal MyMenu()
         {
-            RootMenu = new Menu("ElVarusRevamped", "elvarusrevamped", true).SetFontStyle(FontStyle.Bold, Color.BlueViolet);
+            RootMenu = new Menu("ElVarusRevamped", "elvarusrevamped", true).SetFontStyle(FontStyle.Bold, Color.DodgerBlue);
 
             RootMenu.AddSubMenu(GetTargetSelectorNode());
             RootMenu.AddSubMenu(GetOrbwalkerNode());
@@ -87,6 +87,16 @@
                         nodeCombo.SubMenu("1v1 settings").AddItem(new MenuItem("combor.count.allies", "Maximum allies in range").SetValue(new Slider(3, 1, 5)));
                         nodeCombo.SubMenu("1v1 settings").AddItem(new MenuItem("combor.r.allies.range", "Allies range check").SetValue(new Slider(1750, 500, 2500)));
                         nodeCombo.SubMenu("1v1 settings").AddItem(new MenuItem("combor.r.enemies.range", "Enemies range check").SetValue(new Slider(1750, 500, 2500)));
+
+                        nodeCombo.SubMenu("1v1 settings")
+                            .AddItem(new MenuItem("combo.separator-23", "R WHITELIST - #BLM"))
+                            .SetFontStyle(FontStyle.Bold, Color.Chartreuse);
+
+                        foreach (var enemy in HeroManager.Enemies)
+                        {
+                            nodeCombo.SubMenu("1v1 settings").AddItem(new MenuItem("combo" + enemy.CharData.BaseSkinName + "use", enemy.CharData.BaseSkinName).SetValue(true));
+                        }
+
                         nodeCombo.AddItem(new MenuItem("combousersolo", "Use " + spellSlotName + " solo").SetValue(true));
                      
                         nodeCombo.AddItem(new MenuItem("combo.separator", String.Empty));
@@ -94,12 +104,6 @@
                         nodeCombo.AddItem(new MenuItem("combor.count", "Minimum enemies hit with R").SetValue(new Slider(3, 1, 5)));
 
                         nodeCombo.AddItem(new MenuItem("combor.r.radius", "R spread radius").SetValue(new Slider(500, 120, 600)));
-                        nodeCombo.AddItem(new MenuItem("combo.separator-3", String.Empty));
-                        nodeCombo.AddItem(new MenuItem("combo.separator-4", "R BLACKLIST - #BLM"));
-                        foreach (var enemy in HeroManager.Enemies)
-                        {
-                            nodeCombo.AddItem(new MenuItem("combo" + enemy.CharData.BaseSkinName + "use", enemy.CharData.BaseSkinName).SetValue(false));
-                        }
                     }
                 }
 

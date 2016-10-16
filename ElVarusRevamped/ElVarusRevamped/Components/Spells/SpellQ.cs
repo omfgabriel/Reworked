@@ -183,6 +183,14 @@
                             this.SpellObject.Cast(prediction.CastPosition);
                         }
                     }
+                    
+                    if (this.SpellObject.IsCharging)
+                    {
+                         if (target.Distance(ObjectManager.Player) < this.Range)
+                         {
+                             this.SpellObject.Cast(target);
+                         }
+                    }
                 }
             }
         }

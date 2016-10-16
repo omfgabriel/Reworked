@@ -87,7 +87,7 @@
                         Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("comboew.count").GetValue<Slider>().Value || 
                         HeroManager.Enemies.Count(x => x.IsValidTarget(this.Range + this.Width)) >= MyMenu.RootMenu.Item("comboe.count.hit").GetValue<Slider>().Value)
                     {
-                        this.SpellObject.Cast(target, aoe: true);
+                        this.SpellObject.Cast(target);
 
                         /*var prediction = this.SpellObject.GetPrediction(target);
                         if (prediction.Hitchance >= HitChance.High)

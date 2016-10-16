@@ -106,7 +106,7 @@
                 {
                    if (this.SpellObject.IsCharging ||
                         this.SpellObject.IsKillable(target) ||
-                        MyMenu.RootMenu.Item("comboqalways").IsActive() || target.Distance(ObjectManager.Player) > Orbwalking.GetRealAutoAttackRange(target) * 1.2f ||
+                        MyMenu.RootMenu.Item("comboqalways").IsActive() ||
                         (Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("combow.count").GetValue<Slider>().Value))
                     {
                         if (!this.SpellObject.IsCharging)
@@ -123,7 +123,7 @@
                             else
                             {
                                 var prediction = this.SpellObject.GetPrediction(target);
-                                if (prediction.Hitchance >= HitChance.High)
+                                if (prediction.Hitchance >= HitChance.VeryHigh)
                                 {
                                     this.SpellObject.Cast(prediction.CastPosition);
                                 }
@@ -167,7 +167,7 @@
             if (target != null)
             {
                 if (this.SpellObject.IsCharging ||
-                    MyMenu.RootMenu.Item("mixedqusealways").IsActive() ||
+                    MyMenu.RootMenu.Item("mixedqusealways").IsActive() || target.Distance(ObjectManager.Player) > Orbwalking.GetRealAutoAttackRange(target) * 1.2f ||
                     Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("mixedqusealways.count").GetValue<Slider>().Value)
                 {
                     if (!this.SpellObject.IsCharging)
@@ -177,7 +177,11 @@
 
                     if (this.SpellObject.IsCharging)
                     {
-                        this.SpellObject.Cast(target);
+                        var prediction = this.SpellObject.GetPrediction(target);
+                        if (prediction.Hitchance >= HitChance.High)
+                        {
+                            this.SpellObject.Cast(prediction.CastPosition);
+                        }
                     }
                 }
             }

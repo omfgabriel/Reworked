@@ -65,40 +65,35 @@
                 var target = Misc.GetTarget(this.Range, this.DamageType);
                 if (target != null)
                 {
-                    if (target.HasBuff("dianamoonlight")
-                        || target.Health <= this.SpellObject.GetDamage(target))
+                    if (target.HasBuff("dianamoonlight") || target.Health <= this.SpellObject.GetDamage(target))
                     {
-                        this.SpellObject.Cast(target);
+                        this.SpellObject.CastOnUnit(target);
                     }
 
-
-                    if (target.HasBuff("dianamoonlight")
-                        && (!target.UnderTurret(true)
-                            || (MyMenu.RootMenu.Item("comboRSecureHealth").GetValue<Slider>().Value
-                                <= ObjectManager.Player.HealthPercent)))
+                    if (MyMenu.RootMenu.Item("comboRSecure").IsActive())
                     {
-                        this.SpellObject.Cast(target);
-                    }
+                        if (target.HasBuff("dianamoonlight") && (!target.UnderTurret(true) || (MyMenu.RootMenu.Item("comboRSecureHealth").GetValue<Slider>().Value <= ObjectManager.Player.HealthPercent)))
+                        {
+                            this.SpellObject.CastOnUnit(target);
+                        }
 
-                    if (MyMenu.RootMenu.Item("comboRSecure").IsActive()
-                        && (!target.UnderTurret(true)
-                            || (MyMenu.RootMenu.Item("comboRSecureHealth").GetValue<Slider>().Value
-                                <= ObjectManager.Player.HealthPercent)))
-                    {
-                        if (this.EnemiesInRange <= MyMenu.RootMenu.Item("comboRSecureRange").GetValue<Slider>().Value && !new SpellQ().SpellSlot.IsReady())
+                        if ((!target.UnderTurret(true) || (MyMenu.RootMenu.Item("comboRSecureHealth").GetValue<Slider>().Value <= ObjectManager.Player.HealthPercent)))
+                        {
+                            if (this.EnemiesInRange <= MyMenu.RootMenu.Item("comboRSecureRange").GetValue<Slider>().Value && !new SpellQ().SpellSlot.IsReady())
+                            {
+                                if (target.Health < this.SpellObject.GetDamage(target))
+                                {
+                                    this.SpellObject.CastOnUnit(target);
+                                }
+                            }
+                        }
+
+                        if (this.EnemiesInRange <= MyMenu.RootMenu.Item("comboRSecureRange").GetValue<Slider>().Value)
                         {
                             if (target.Health < this.SpellObject.GetDamage(target))
                             {
-                                this.SpellObject.Cast(target);
+                                this.SpellObject.CastOnUnit(target);
                             }
-                        }
-                    }
-
-                    if (this.EnemiesInRange <= MyMenu.RootMenu.Item("comboRSecureRange").GetValue<Slider>().Value)
-                    {
-                        if (target.Health < this.SpellObject.GetDamage(target))
-                        {
-                            this.SpellObject.Cast(target);
                         }
                     }
                 }

@@ -64,15 +64,22 @@
                     return;
                 }
 
-                if (MyMenu.RootMenu.Item("interrupt.e.dash").IsActive()
-                    && MyMenu.RootMenu.Item("interrupt.e.dash.mana").GetValue<Slider>().Value
+                if (!MyMenu.RootMenu.Item("interrupt.e.dash").IsActive())
+                {
+                    return;
+                }
+
+                if (MyMenu.RootMenu.Item("interrupt.e.dash.mana").GetValue<Slider>().Value
                     <= ObjectManager.Player.ManaPercent)
                 {
                     if (Misc.SpellE.SpellSlot.IsReady())
                     {
-                        if (!args.IsBlink && Misc.SpellE.Range <= ObjectManager.Player.Distance(sender))
+                        if (ObjectManager.Player.Distance(sender) <= Misc.SpellE.Range)
                         {
-                            Misc.SpellE.SpellObject.Cast();
+                            if (!args.IsBlink)
+                            {
+                                Misc.SpellE.SpellObject.Cast();
+                            }
                         }
                     }
                 }

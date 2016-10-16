@@ -31,7 +31,7 @@
         /// <summary>
         ///     Gets the range.
         /// </summary>
-        internal override float Range => 825f;
+        internal override float Range => 850f;
 
         /// <summary>
         ///     Gets or sets the skillshot type.
@@ -51,7 +51,7 @@
         /// <summary>
         ///     Gets the width.
         /// </summary>
-        internal override float Width => 195f;
+        internal override float Width => 195f; // end point is 195 the other line is 50
 
         #endregion
 

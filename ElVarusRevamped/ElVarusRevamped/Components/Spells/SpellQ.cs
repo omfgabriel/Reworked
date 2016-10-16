@@ -106,8 +106,8 @@
                 {
                    if (this.SpellObject.IsCharging ||
                         this.SpellObject.IsKillable(target) ||
-                        MyMenu.RootMenu.Item("comboqalways").IsActive() || target.Distance(ObjectManager.Player) > Orbwalking.GetRealAutoAttackRange(target) * 1.2f ||
-                        (Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("combow.count").GetValue<Slider>().Value))
+                        MyMenu.RootMenu.Item("comboqalways").IsActive() || 
+                        (Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("combow.count").GetValue<Slider>().Value)) //target.Distance(ObjectManager.Player) > Orbwalking.GetRealAutoAttackRange(target) * 1.2f ||
                     {
                         if (!this.SpellObject.IsCharging)
                         {

@@ -24,6 +24,11 @@
         internal override TargetSelector.DamageType DamageType => TargetSelector.DamageType.Magical;
 
         /// <summary>
+        ///     Gets the aoe.
+        /// </summary>
+        internal override bool Aoe => false;
+
+        /// <summary>
         ///     Gets the delay.
         /// </summary>
         internal override float Delay => 450f;
@@ -41,7 +46,7 @@
         /// <summary>
         ///     Gets the speed.
         /// </summary>
-        internal override float Speed => 250f;
+        internal override float Speed => 2500f;
 
         /// <summary>
         ///     Gets the spell slot.
@@ -69,10 +74,27 @@
                     return;
                 }
 
-                var target = Misc.GetTarget(this.Range, this.DamageType);
+                var target = Misc.GetTarget(this.Range + this.Width, this.DamageType);
                 if (target != null)
                 {
-
+                    // lul 0
+                    var qTargets =
+                        HeroManager.Enemies.Where(x => x.IsValidTarget(this.Range + this.Width))
+                            .OrderByDescending(h => h.Distance(ObjectManager.Player));
+                    // lul 1
+                    if (qTargets.Any())
+                    {
+                        // lul 2
+                        foreach (var target1 in qTargets)
+                        {
+                            var pred = this.SpellObject.GetPrediction(target1);
+                            if (pred.Hitchance >= HitChance.VeryHigh)
+                            {
+                                // lul 3
+                                this.SpellObject.Cast(pred.CastPosition.To2D());
+                            }
+                        }
+                    }
                 }
             }
             catch (Exception e)
@@ -88,28 +110,6 @@
         internal override void OnMixed()
         {
             this.OnCombo();
-        }
-
-
-        /// <summary>
-        ///     The on last hit callback.
-        /// </summary>
-        internal override void OnLastHit()
-        {
-        }
-
-        /// <summary>
-        ///     The on lane clear callback.
-        /// </summary>
-        internal override void OnLaneClear()
-        {
-        }
-
-        /// <summary>
-        ///     The on jungle clear callback.
-        /// </summary>
-        internal override void OnJungleClear()
-        {
         }
 
         #endregion

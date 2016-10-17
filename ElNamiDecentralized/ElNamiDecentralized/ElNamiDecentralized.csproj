@@ -33,16 +33,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="LeagueSharp">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\2bScOWoCt\References\LeagueSharp.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\2bScOWoCt\References\LeagueSharp.dll</HintPath>
     </Reference>
     <Reference Include="LeagueSharp.Common">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\2bScOWoCt\References\LeagueSharp.Common.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\2bScOWoCt\References\LeagueSharp.Common.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\2bScOWoCt\References\SharpDX.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\2bScOWoCt\References\SharpDX.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -56,6 +57,7 @@
     <Compile Include="Components\Spells\ISpell.cs" />
     <Compile Include="Components\Spells\SpellE.cs" />
     <Compile Include="Components\Spells\SpellQ.cs" />
+    <Compile Include="Components\Spells\SpellR.cs" />
     <Compile Include="Components\Spells\SpellW.cs" />
     <Compile Include="Enumerations\LoggingEntryTrype.cs" />
     <Compile Include="Program.cs" />

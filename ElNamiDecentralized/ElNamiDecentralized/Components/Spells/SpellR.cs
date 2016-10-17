@@ -26,12 +26,17 @@
         /// <summary>
         ///     Gets the delay.
         /// </summary>
-        internal override float Delay => 0f;
+        internal override float Delay => 500f;
 
         /// <summary>
         ///     Gets the range.
         /// </summary>
-        internal override float Range => 0f;
+        internal override float Range => 2750f;
+
+        /// <summary>
+        ///     Gets the aoe.
+        /// </summary>
+        internal override bool Aoe => true;
 
         /// <summary>
         ///     Gets or sets the skillshot type.
@@ -41,7 +46,7 @@
         /// <summary>
         ///     Gets the speed.
         /// </summary>
-        internal override float Speed => 0f;
+        internal override float Speed => 850f;
 
         /// <summary>
         ///     Gets the spell slot.
@@ -51,7 +56,7 @@
         /// <summary>
         ///     Gets the width.
         /// </summary>
-        internal override float Width => 0f;
+        internal override float Width => 260f;
 
         #endregion
 
@@ -69,48 +74,37 @@
                     return;
                 }
 
+                // For later
+                /*
+                var target = HeroManager.Enemies.OrderBy(x => x.Distance(ObjectManager.Player)).FirstOrDefault(x => Misc.SpellR.SpellObject.IsInRange(x));
+                if (target != null)
+                {
+                    var rect = ObjectManager.Player.ServerPosition.To2D();
+                    var rectEnd = this.SpellObject.GetPrediction(target).CastPosition.To2D();
+
+                    var rectangle = new Geometry.Polygon.Rectangle(rect, rectEnd, this.Width);
+                    Logging.AddEntry(LoggingEntryTrype.Info, "SpellR.cs can hit {0}", HeroManager.Enemies.Count(x => rectangle.IsInside(x)));
+
+                    if (HeroManager.Enemies.Count(x => rectangle.IsInside(x)) >= MyMenu.RootMenu.Item("comborhit").GetValue<Slider>().Value)
+                    {
+                        this.SpellObject.Cast(target);
+                    }
+                }*/
+
                 var target = Misc.GetTarget(this.Range, this.DamageType);
                 if (target != null)
                 {
+                    this.SpellObject.CastIfWillHit(target, MyMenu.RootMenu.Item("comborhit").GetValue<Slider>().Value);
                 }
             }
             catch (Exception e)
             {
-                Logging.AddEntry(LoggingEntryTrype.Error, "@SpellE.cs: Can not run OnCombo - {0}", e);
+                Logging.AddEntry(LoggingEntryTrype.Error, "@SpellR.cs: Can not run OnCombo - {0}", e);
                 throw;
             }
-        }
-
-        /// <summary>
-        ///     The on mixed callback.
-        /// </summary>
-        internal override void OnMixed()
-        {
-            this.OnCombo();
-        }
-
-
-        /// <summary>
-        ///     The on last hit callback.
-        /// </summary>
-        internal override void OnLastHit()
-        {
-        }
-
-        /// <summary>
-        ///     The on lane clear callback.
-        /// </summary>
-        internal override void OnLaneClear()
-        {
-        }
-
-        /// <summary>
-        ///     The on jungle clear callback.
-        /// </summary>
-        internal override void OnJungleClear()
-        {
         }
 
         #endregion
     }
 }
+ 

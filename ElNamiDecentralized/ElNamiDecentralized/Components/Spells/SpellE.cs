@@ -26,17 +26,17 @@
         /// <summary>
         ///     Gets the delay.
         /// </summary>
-        internal override float Delay => 0f;
+        internal override float Delay => 250f;
 
         /// <summary>
         ///     Gets the range.
         /// </summary>
-        internal override float Range => 0f;
+        internal override float Range => 800f;
 
         /// <summary>
-        ///     Gets or sets the skillshot type.
+        ///     Gets or sets the Targeted type.
         /// </summary>
-        internal override SkillshotType SkillshotType => SkillshotType.SkillshotLine;
+        internal override bool Targeted => true;
 
         /// <summary>
         ///     Gets the speed.
@@ -72,6 +72,20 @@
                 var target = Misc.GetTarget(this.Range, this.DamageType);
                 if (target != null)
                 {
+                    var closeAlly =
+                        HeroManager.Allies.Where(a => this.SpellObject.IsInRange(a) && !a.IsMe)
+                            .OrderByDescending(h => (h.PhysicalDamageDealtPlayer + h.MagicDamageDealtPlayer))
+                            .FirstOrDefault();
+
+                    if (closeAlly != null)
+                    {
+                        this.SpellObject.CastOnUnit(closeAlly);
+                    }
+
+                    if (ObjectManager.Player.CountAlliesInRange(700f) == 0)
+                    {
+                        this.SpellObject.CastOnUnit(ObjectManager.Player);
+                    }
                 }
             }
             catch (Exception e)
@@ -87,28 +101,6 @@
         internal override void OnMixed()
         {
             this.OnCombo();
-        }
-
-
-        /// <summary>
-        ///     The on last hit callback.
-        /// </summary>
-        internal override void OnLastHit()
-        {
-        }
-
-        /// <summary>
-        ///     The on lane clear callback.
-        /// </summary>
-        internal override void OnLaneClear()
-        {
-        }
-
-        /// <summary>
-        ///     The on jungle clear callback.
-        /// </summary>
-        internal override void OnJungleClear()
-        {
         }
 
         #endregion

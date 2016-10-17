@@ -1,6 +1,7 @@
 ﻿namespace ElNamiDecentralized.Components
 {
     using System;
+    using System.Linq;
 
     using ElNamiDecentralized.Enumerations;
     using ElNamiDecentralized.Utils;
@@ -60,53 +61,92 @@
                 {
                     nodeCombo.AddItem(new MenuItem("combo" + spellSlotNameLower + "use", "Use " + spellSlotName).SetValue(true));
                     nodeCombo.AddItem(new MenuItem("combo" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(5)));
+                    if (spellSlotNameLower.Equals("r", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        nodeCombo.AddItem(new MenuItem("combo" + spellSlotNameLower + "hit", "Minimum enemies hit R").SetValue(new Slider(3, 1, 5)));
+                    }
                 }
 
                 node.AddSubMenu(nodeCombo);
 
-                var nodeMixed = new Menu("Mixed", spellSlotNameLower + "mixedmenu");
+                if (!spellSlotNameLower.Equals("r", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    nodeMixed.AddItem(new MenuItem("mixed" + spellSlotNameLower + "use", "Use " + spellSlotName).SetValue(true));
-                    nodeMixed.AddItem(new MenuItem("mixed" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(50)));
-                }
 
-                node.AddSubMenu(nodeMixed);
+                    var nodeMixed = new Menu("Mixed", spellSlotNameLower + "mixedmenu");
+                    {
+                        nodeMixed.AddItem(
+                            new MenuItem("mixed" + spellSlotNameLower + "use", "Use " + spellSlotName).SetValue(true));
+                        nodeMixed.AddItem(
+                            new MenuItem("mixed" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(50)));
+
+                        if (spellSlotNameLower.Equals("w", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            nodeMixed.AddItem(
+                                new MenuItem("harass.mode", "W mode").SetValue(
+                                    new StringList(new[] { "Smart", "YOLO!" }, 0)));
+                            nodeMixed.AddItem(
+                                new MenuItem("smart.harass.health", "[SMART] Minimum enemy healthpercentage").SetValue(
+                                    new Slider(75)));
+
+                        }
+                    }
+
+                    node.AddSubMenu(nodeMixed);
+                }
 
                 if (spellSlotNameLower.Equals("q", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    var nodeLastHit = new Menu("LastHit", spellSlotNameLower + "lasthitmenu");
+                    var nodeSupport = new Menu("Support", spellSlotNameLower + "supportmenu");
                     {
-                        nodeLastHit.AddItem(
-                            new MenuItem("lasthit" + spellSlotNameLower + "use", "Use " + spellSlotName).SetValue(true));
-                        nodeLastHit.AddItem(
-                            new MenuItem("lasthit" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(50)));
-
-                        nodeCombo.AddItem(new MenuItem("lasthit.mode", "Q mode").SetValue(new StringList(new[] { "Always", "Out of range" }, 0)));
+                        nodeSupport.AddItem(new MenuItem("support.mode", "Use support mode").SetValue(true));
                     }
-                    node.AddSubMenu(nodeLastHit);
+
+                    node.AddSubMenu(nodeSupport);
                 }
 
 
-                if (!spellSlotNameLower.Equals("e", StringComparison.InvariantCultureIgnoreCase))
+                if (spellSlotNameLower.Equals("e", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    var nodeLaneClear = new Menu("Clear", spellSlotNameLower + "laneclearmenu");
+                    var nodeTideCaller = new Menu("Tidecaller's Blessing (E)", spellSlotNameLower + "tidecallermenu");
                     {
-                        nodeLaneClear.AddItem(new MenuItem("laneclear" + spellSlotNameLower + "use", "Use " + spellSlotName).SetValue(true));
-                        nodeLaneClear.AddItem(new MenuItem("laneclear" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(50)));
-
-                        if (spellSlotNameLower.Equals("r", StringComparison.InvariantCultureIgnoreCase))
+                        nodeTideCaller.AddItem(new MenuItem("tide.activated", "Use E").SetValue(true));
+                        nodeTideCaller.AddItem(new MenuItem("tide.mode", "E mode").SetValue(new StringList(new[] { "Always", "Combo" }, 0)));
+                        nodeTideCaller.AddItem(new MenuItem("tide.mana", "Min. Mana").SetValue(new Slider(20)));
+                        foreach (var allies in HeroManager.Allies)
                         {
-                            nodeLaneClear.AddItem(new MenuItem("laneclear.r.siege", "Use " + spellSlotName + " to execute siege").SetValue(false));
-                        }
-
-                        if (spellSlotNameLower.Equals("q", StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            nodeLaneClear.AddItem(new MenuItem("lasthit.count", "Minions hit Q").SetValue(new Slider(2, 1, 5)));
+                            nodeTideCaller.AddItem(new MenuItem($"eon{allies.ChampionName}", "Use on " + allies.ChampionName))
+                                .SetValue(true);
                         }
                     }
 
-                    node.AddSubMenu(nodeLaneClear);
+                    node.AddSubMenu(nodeTideCaller);
                 }
+
+
+                if (spellSlotNameLower.Equals("w", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    var nodeAllyHeal = new Menu("Heal", spellSlotNameLower + "healmenu");
+                    {
+                        nodeAllyHeal.AddItem(new MenuItem("heal.allies", "Use W").SetValue(true));
+                        nodeAllyHeal.AddItem(new MenuItem("allies.healthpercantage", "Health Percentage").SetValue(new Slider(20)));
+                    }
+
+                    node.AddSubMenu(nodeAllyHeal);
+                }
+
+
+                if (spellSlotNameLower.Equals("q", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    var nodeInterrupt = new Menu("Interrupt", spellSlotNameLower + "interruptmenu");
+                    {
+                        nodeInterrupt.AddItem(new MenuItem("gapcloser.q", "Use Q on gapcloser").SetValue(true));
+                        nodeInterrupt.AddItem(new MenuItem("interrupt.q", "Use Q to interrupt").SetValue(true));
+                        nodeInterrupt.AddItem(new MenuItem("interrupt.q.mana", "Min. Mana").SetValue(new Slider(5)));
+                    }
+
+                    node.AddSubMenu(nodeInterrupt);
+                }
+
 
                 RootMenu.AddSubMenu(node);
             }

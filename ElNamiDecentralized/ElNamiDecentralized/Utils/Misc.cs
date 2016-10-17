@@ -3,6 +3,7 @@
     using System;
     using System.Linq;
 
+    using ElNamiDecentralized.Components.Spells;
     using ElNamiDecentralized.Enumerations;
 
     using LeagueSharp;
@@ -16,22 +17,14 @@
         #region Methods
 
         /// <summary>
-        ///     Gets the target W stacks
+        ///     Spell Q
         /// </summary>
-        /// <param name="target"></param>
-        /// <returns></returns>
-        internal static int GetWStacks(Obj_AI_Base target)
-        {
-            try
-            {
-                return target.GetBuffCount("varuswdebuff");
-            }
-            catch (Exception e)
-            {
-                Logging.AddEntry(LoggingEntryTrype.Error, "@Misc.cs: Can not return target - {0}", e);
-                throw;
-            }
-        }
+        public static SpellQ SpellQ;
+
+        /// <summary>
+        ///     Spell E
+        /// </summary>
+        public static SpellE SpellE;
 
         /// <summary>
         ///     Gets a target from the common target selector.

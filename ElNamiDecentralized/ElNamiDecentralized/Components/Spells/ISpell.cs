@@ -158,28 +158,7 @@
         }
 
         /// <summary>
-        /// The on lane clear callback.
-        /// </summary>
-        internal virtual void OnLaneClear()
-        {
-        }
-
-        /// <summary>
-        /// The on jungle clear callback.
-        /// </summary>
-        internal virtual void OnJungleClear()
-        {
-        }
-
-        /// <summary>
-        /// The on last hit callback.
-        /// </summary>
-        internal virtual void OnLastHit()
-        {
-        }
-
-        /// <summary>
-        /// The on mixed callback.
+        ///     The on on mixed callback.
         /// </summary>
         internal virtual void OnMixed()
         {

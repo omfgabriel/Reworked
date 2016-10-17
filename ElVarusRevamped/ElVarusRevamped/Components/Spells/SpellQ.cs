@@ -170,7 +170,9 @@
                 if (this.SpellObject.IsCharging)
                 {
                    if(this.Range >= this.MaxRange || target.Distance(ObjectManager.Player) < this.Range + 250 
-                        || (this.SpellObject.GetPrediction(target).Hitchance >= HitChance.VeryHigh) || target.Distance(ObjectManager.Player) < this.Range)
+                        || (this.SpellObject.GetPrediction(target).Hitchance >= HitChance.VeryHigh)
+                            && target.Distance(ObjectManager.Player) > this.Range + 250
+                            && target.Distance(ObjectManager.Player) < this.MaxRange || target.Distance(ObjectManager.Player) < this.Range)
                     {
                         this.SpellObject.Cast(target);
                     }

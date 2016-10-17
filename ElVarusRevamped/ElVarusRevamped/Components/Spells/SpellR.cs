@@ -77,7 +77,7 @@
 
                 var target = Misc.GetTarget(this.Range + this.Width, this.DamageType);
                 if (target != null)
-                {
+                { 
                     if (MyMenu.RootMenu.Item("combousermultiple").IsActive())
                     {
                         var spreadRadius = MyMenu.RootMenu.Item("combor.r.radius").GetValue<Slider>().Value;
@@ -129,6 +129,24 @@
             {
                 Logging.AddEntry(LoggingEntryTrype.Error, "@SpellR.cs: Can not run OnCombo - {0}", e);
                 throw;
+            }
+        }
+
+        /// <summary>
+        ///     The on update callback.
+        /// </summary>
+        internal override void OnUpdate()
+        {
+            var target = Misc.GetTarget(this.Range + this.Width, this.DamageType);
+            if (target != null)
+            {
+                if (this.SpellObject.IsReady() && target.IsValidTarget(this.Range))
+                {
+                    if (MyMenu.RootMenu.Item("combo.semi.r").GetValue<KeyBind>().Active)
+                    {
+                        this.SpellObject.Cast(target);
+                    }
+                }
             }
         }
 

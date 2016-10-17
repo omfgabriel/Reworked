@@ -141,7 +141,7 @@
         /// </param>
         private void Game_OnUpdate(EventArgs args)
         {
-            if (ObjectManager.Player.IsDead || MenuGUI.IsChatOpen || MenuGUI.IsShopOpen || Program.Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.None) return;
+            if (ObjectManager.Player.IsDead || MenuGUI.IsChatOpen || MenuGUI.IsShopOpen) return;
 
             if (MyMenu.RootMenu.Item("forceqalways").IsActive())
             {
@@ -173,6 +173,8 @@
             this.spells.Where(spell => IsSpellActive(spell.SpellSlot, Orbwalking.OrbwalkingMode.LastHit))
                         .ToList()
                         .ForEach(spell => spell.OnLastHit());
+
+            this.spells.ToList().ForEach(spell => spell.OnUpdate());
 
             this.Killsteal();
         }

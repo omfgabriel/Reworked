@@ -97,6 +97,8 @@
                             nodeCombo.SubMenu("1v1 settings").AddItem(new MenuItem("combo" + enemy.CharData.BaseSkinName + "use", enemy.CharData.BaseSkinName).SetValue(true));
                         }
 
+
+                        nodeCombo.AddItem(new MenuItem("combo.semi.r", "Semi-manual cast R key").SetValue(new KeyBind("T".ToCharArray()[0], KeyBindType.Press)));
                         nodeCombo.AddItem(new MenuItem("combousersolo", "Use " + spellSlotName + " solo").SetValue(true));
                      
                         nodeCombo.AddItem(new MenuItem("combo.separator", String.Empty));

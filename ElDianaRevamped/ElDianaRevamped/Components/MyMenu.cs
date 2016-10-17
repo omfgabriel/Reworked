@@ -61,11 +61,7 @@
                     nodeCombo.AddItem(new MenuItem("combo" + spellSlotNameLower + "use", "Use " + spellSlotName).SetValue(true));
                     nodeCombo.AddItem(new MenuItem("combo" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(5)));
 
-                    if (spellSlotNameLower.Equals("q", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        nodeCombo.AddItem(new MenuItem("combo.mode", "Q mode").SetValue(new StringList(new[] { "Target", "Predicted" }, 0)));
-                    }
-
+ 
                     if (spellSlotNameLower.Equals("r", StringComparison.InvariantCultureIgnoreCase))
                     {
                         nodeCombo.AddItem(new MenuItem("comboRSecure", "Use R to secure kill").SetValue(true));

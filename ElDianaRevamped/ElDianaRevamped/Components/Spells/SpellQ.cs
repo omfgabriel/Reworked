@@ -69,20 +69,13 @@
                     return;
                 }
 
-                var target = Misc.GetTarget(this.Range, this.DamageType);
+                var target = Misc.GetTarget(this.Range + this.Width, this.DamageType);
                 if (target != null)
                 {
-                    if (MyMenu.RootMenu.Item("combo.mode").GetValue<StringList>().SelectedIndex == 0)
+                    var pred = Prediction.GetPrediction(target, this.Delay, target.Distance(ObjectManager.Player) < 500 ? 100 : this.Width, this.Speed);
+                    if (pred.Hitchance >= HitChance.VeryHigh)
                     {
-                        this.SpellObject.Cast(target);
-                    }
-                    else
-                    {
-                        var prediction = this.SpellObject.GetPrediction(target);
-                        if (prediction.Hitchance >= HitChance.VeryHigh)
-                        {
-                            this.SpellObject.Cast(prediction.CastPosition.To2D());
-                        }
+                        this.SpellObject.Cast(pred.CastPosition);
                     }
                 }
             }

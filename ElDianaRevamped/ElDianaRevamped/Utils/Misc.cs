@@ -15,10 +15,15 @@
     internal static class Misc
     {
         #region Methods
+
         /// <summary>
         ///     Spell E
         /// </summary>
         public static SpellE SpellE;
+        /// <summary>
+        ///     Spell Q
+        /// </summary>
+        public static SpellQ SpellQ;
 
         /// <summary>
         ///     Gets a target from the common target selector.

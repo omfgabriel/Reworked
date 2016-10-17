@@ -88,7 +88,7 @@
                         foreach (var target1 in qTargets)
                         {
                             var pred = this.SpellObject.GetPrediction(target1);
-                            if (pred.Hitchance >= HitChance.VeryHigh)
+                            if (pred.Hitchance >= HitChance.VeryHigh && pred.CastPosition.Distance(ObjectManager.Player.ServerPosition) < this.Range)
                             {
                                 // lul 3
                                 this.SpellObject.Cast(pred.CastPosition.To2D());

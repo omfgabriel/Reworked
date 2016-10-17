@@ -34,7 +34,7 @@
         {
             try
             {
-                this.LoadSpells(new List<ISpell>() { new SpellQ(), new SpellW(), new SpellE() });
+                this.LoadSpells(new List<ISpell>() { new SpellQ(), new SpellW(), new SpellE(), new SpellR() });
             }
             catch (Exception e)
             {

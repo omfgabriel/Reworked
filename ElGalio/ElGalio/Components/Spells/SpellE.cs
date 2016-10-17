@@ -72,6 +72,7 @@
                 var target = Misc.GetTarget(this.Range, this.DamageType);
                 if (target != null)
                 {
+                    this.SpellObject.Cast(target);
                 }
             }
             catch (Exception e)

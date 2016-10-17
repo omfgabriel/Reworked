@@ -36,7 +36,7 @@
         /// <summary>
         ///     Gets or sets the skillshot type.
         /// </summary>
-        internal override SkillshotType SkillshotType => SkillshotType.SkillshotLine;
+        internal override SkillshotType SkillshotType => SkillshotType.SkillshotCircle;
 
         /// <summary>
         ///     Gets the speed.
@@ -72,6 +72,7 @@
                 var target = Misc.GetTarget(this.Range, this.DamageType);
                 if (target != null)
                 {
+                    this.SpellObject.Cast(target);
                 }
             }
             catch (Exception e)

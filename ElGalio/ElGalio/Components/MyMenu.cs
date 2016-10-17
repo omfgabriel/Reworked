@@ -60,17 +60,26 @@
                 {
                     nodeCombo.AddItem(new MenuItem("combo" + spellSlotNameLower + "use", "Use " + spellSlotName).SetValue(true));
                     nodeCombo.AddItem(new MenuItem("combo" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(5)));
+
+                    if (spellSlotNameLower.Equals("r", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        nodeCombo.AddItem(new MenuItem("countrenemies", "Enemies in R range").SetValue(new Slider(3, 1, 5)));
+                    }
                 }
 
                 node.AddSubMenu(nodeCombo);
 
-                var nodeMixed = new Menu("Mixed", spellSlotNameLower + "mixedmenu");
+                if (!spellSlotNameLower.Equals("r", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    nodeMixed.AddItem(new MenuItem("mixed" + spellSlotNameLower + "use", "Use " + spellSlotName).SetValue(true));
-                    nodeMixed.AddItem(new MenuItem("mixed" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(50)));
+                    var nodeMixed = new Menu("Mixed", spellSlotNameLower + "mixedmenu");
+                    {
+                        nodeMixed.AddItem(new MenuItem("mixed" + spellSlotNameLower + "use", "Use " + spellSlotName).SetValue(true));
+                        nodeMixed.AddItem(new MenuItem("mixed" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(50)));
+                    }
+
+                    node.AddSubMenu(nodeMixed);
                 }
 
-                node.AddSubMenu(nodeMixed);
 
                 if (spellSlotNameLower.Equals("q", StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -87,22 +96,12 @@
                 }
 
 
-                if (!spellSlotNameLower.Equals("e", StringComparison.InvariantCultureIgnoreCase))
+                if (spellSlotNameLower.Equals("q", StringComparison.InvariantCultureIgnoreCase))
                 {
                     var nodeLaneClear = new Menu("Clear", spellSlotNameLower + "laneclearmenu");
                     {
                         nodeLaneClear.AddItem(new MenuItem("laneclear" + spellSlotNameLower + "use", "Use " + spellSlotName).SetValue(true));
                         nodeLaneClear.AddItem(new MenuItem("laneclear" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(50)));
-
-                        if (spellSlotNameLower.Equals("r", StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            nodeLaneClear.AddItem(new MenuItem("laneclear.r.siege", "Use " + spellSlotName + " to execute siege").SetValue(false));
-                        }
-
-                        if (spellSlotNameLower.Equals("q", StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            nodeLaneClear.AddItem(new MenuItem("lasthit.count", "Minions hit Q").SetValue(new Slider(2, 1, 5)));
-                        }
                     }
 
                     node.AddSubMenu(nodeLaneClear);

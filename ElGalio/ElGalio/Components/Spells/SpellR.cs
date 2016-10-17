@@ -72,6 +72,16 @@
                 var target = Misc.GetTarget(this.Range, this.DamageType);
                 if (target != null)
                 {
+                    var enemiesCount =
+                        HeroManager.Enemies.Count(
+                            x => x.IsValidTarget(this.Range + this.Width) && !x.IsDead && !x.IsZombie);
+
+                    if (enemiesCount < MyMenu.RootMenu.Item("countrenemies").GetValue<Slider>().Value)
+                    {
+                        return;
+                    }
+
+                    // do other stuff..
                 }
             }
             catch (Exception e)

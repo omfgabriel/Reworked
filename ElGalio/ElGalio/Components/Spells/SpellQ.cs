@@ -69,7 +69,7 @@
                     return;
                 }
 
-                var target = Misc.GetTarget(this.Range, this.DamageType);
+                var target = Misc.GetTarget(this.Range + this.Width, this.DamageType);
                 if (target != null)
                 {
                     this.SpellObject.Cast(target);
@@ -90,12 +90,20 @@
             this.OnCombo();
         }
 
-
         /// <summary>
         ///     The on last hit callback.
         /// </summary>
         internal override void OnLastHit()
         {
+            var minion =
+                MinionManager.GetMinions(this.Range)
+                    .Where(obj => this.SpellObject.IsKillable(obj))
+                    .MinOrDefault(obj => obj.Health);
+
+            if (minion != null)
+            {
+                this.SpellObject.Cast(minion);
+            }
         }
 
         /// <summary>
@@ -103,6 +111,20 @@
         /// </summary>
         internal override void OnLaneClear()
         {
+            var minions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, this.SpellObject.Range + this.SpellObject.Width);
+            var minion = this.SpellObject.GetCircularFarmLocation(minions, this.SpellObject.Width);
+            var minionsHit = minion.MinionsHit;
+
+            if (minions != null)
+            {
+                if (minionsHit >= MyMenu.RootMenu.Item("laneclearqhit").GetValue<Slider>().Value)
+                {
+                    if (minion.Position.IsValid())
+                    {
+                        this.SpellObject.Cast(minion.Position);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -110,6 +132,21 @@
         /// </summary>
         internal override void OnJungleClear()
         {
+            var minions =
+                MinionManager.GetMinions(
+                    ObjectManager.Player.ServerPosition,
+                    this.Range + this.Width,
+                    MinionTypes.All,
+                    MinionTeam.Neutral,
+                    MinionOrderTypes.MaxHealth).FirstOrDefault();
+
+            if (minions != null)
+            {
+                if (minions.IsValid)
+                {
+                    this.SpellObject.Cast(minions.Position);
+                }
+            }
         }
 
         #endregion

@@ -102,6 +102,7 @@
                     {
                         nodeLaneClear.AddItem(new MenuItem("laneclear" + spellSlotNameLower + "use", "Use " + spellSlotName).SetValue(true));
                         nodeLaneClear.AddItem(new MenuItem("laneclear" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(50)));
+                        nodeLaneClear.AddItem(new MenuItem("laneclear" + spellSlotNameLower + "hit", "Minimum minions hit").SetValue(new Slider(3, 1, 6)));
                     }
 
                     node.AddSubMenu(nodeLaneClear);

@@ -15,6 +15,10 @@
     {
         #region Methods
 
+        /// <summary>
+        ///     Player has the devoured buff.
+        /// </summary>
+        internal static bool HasIdolOfDurandBuff => ObjectManager.Player.HasBuff("GalioIdolOfDurand");
 
         /// <summary>
         ///     Gets a target from the common target selector.

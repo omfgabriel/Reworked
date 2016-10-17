@@ -21,7 +21,7 @@
         /// <summary>
         ///     Gets or sets the damage type.
         /// </summary>
-        internal override TargetSelector.DamageType DamageType => TargetSelector.DamageType.Magical;
+        internal override TargetSelector.DamageType DamageType => TargetSelector.DamageType.Physical;
 
         /// <summary>
         ///     Gets Aoe

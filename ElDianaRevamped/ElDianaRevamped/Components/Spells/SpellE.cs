@@ -57,7 +57,6 @@
                 {
                     if (ObjectManager.Player.IsDashing())
                     {
-                        Logging.AddEntry(LoggingEntryTrype.Debug, "@SpellE.cs: Player is dashing");
                         return;
                     }
 

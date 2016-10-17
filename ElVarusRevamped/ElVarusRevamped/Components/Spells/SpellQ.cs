@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.CompilerServices;
+    using System.Runtime.InteropServices;
 
     using ElVarusRevamped.Enumerations;
     using ElVarusRevamped.Utils;
@@ -68,7 +69,7 @@
         /// <summary>
         ///     Gets the delta T
         /// </summary>
-        internal override float DeltaT => 1.5f;
+        internal override float DeltaT => 1.2f;
 
         /// <summary>
         ///     Gets the spellname.
@@ -116,22 +117,15 @@
 
                     if (this.SpellObject.IsCharging)
                     {
-                        if (this.Range >= this.MaxRange || target.Distance(ObjectManager.Player) < this.Range + 250
-                            || (this.SpellObject.GetPrediction(target).Hitchance >= HitChance.VeryHigh)
+                        if (MyMenu.RootMenu.Item("comboqalways").IsActive() || this.Range >= this.MaxRange || target.Distance(ObjectManager.Player) < this.Range + 250 || (this.SpellObject.GetPrediction(target).Hitchance >= HitChance.VeryHigh)
                             && target.Distance(ObjectManager.Player) > this.Range + 250
                             && target.Distance(ObjectManager.Player) < this.MaxRange || ObjectManager.Player.HealthPercent <= MyMenu.RootMenu.Item("comboq.fast").GetValue<Slider>().Value)
                         {
-                            if (!this.SpellObject.IsCharging)
-                            {
-                                return;
-                            }
-
                             if ((!MyMenu.RootMenu.Item("comboqalways").IsActive()
                                  && Misc.LastE + 200 < Environment.TickCount) || 
                                  Misc.QIsKillable(target, Misc.GetQCollisionsCount(target, this.SpellObject.GetPrediction(target).CastPosition)))
                             {
                                 this.SpellObject.Cast(target);
-                                Misc.LastQ = Environment.TickCount;
                             }
                             else
                             {
@@ -145,6 +139,23 @@
             {
                 Logging.AddEntry(LoggingEntryTrype.Error, "@SpellQ.cs: Can not run OnCombo - {0}", e);
                 throw;
+            }
+        }
+
+        /// <summary>
+        ///     Cast Q.
+        /// </summary>
+        /// <param name="target"></param>
+        private void CastQ(Obj_AI_Hero target)
+        {
+            if (this.SpellObject.IsCharging)
+            {
+                var prediction = this.SpellObject.GetPrediction(target);
+                if (prediction.Hitchance >= HitChance.VeryHigh)
+                {
+                    this.SpellObject.Cast(prediction.CastPosition);
+                    Misc.LastQ = Environment.TickCount;
+                }
             }
         }
 

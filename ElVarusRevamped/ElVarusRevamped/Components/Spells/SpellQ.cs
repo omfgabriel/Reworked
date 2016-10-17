@@ -113,11 +113,11 @@
                         {
                             this.SpellObject.StartCharging();
                         }
-
+                        // todo : make range check optional
                         if (this.SpellObject.IsCharging)
                         {
-                            if (this.Range >= this.MaxRange || target.Distance(ObjectManager.Player) < this.Range + 200 || 
-                                (this.SpellObject.GetPrediction(target).Hitchance >= HitChance.VeryHigh) && target.Distance(ObjectManager.Player) > this.Range + 200
+                            if (this.Range >= this.MaxRange || target.Distance(ObjectManager.Player) < this.Range + 250 || 
+                                (this.SpellObject.GetPrediction(target).Hitchance >= HitChance.VeryHigh) && target.Distance(ObjectManager.Player) > this.Range + 250
                                 && target.Distance(ObjectManager.Player) < this.MaxRange)
                             {
                                 this.SpellObject.Cast(target);

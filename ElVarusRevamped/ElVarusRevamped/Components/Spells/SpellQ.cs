@@ -105,7 +105,7 @@
                 if (target != null)
                 {
                    if (this.SpellObject.IsCharging ||
-                        this.SpellObject.IsKillable(target) ||
+                         Misc.QIsKillable(target, Misc.GetQCollisionsCount(target, this.SpellObject.GetPrediction(target).CastPosition)) ||
                         MyMenu.RootMenu.Item("comboqalways").IsActive() ||
                         (Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("combow.count").GetValue<Slider>().Value))
                     {
@@ -116,23 +116,9 @@
 
                         if (this.SpellObject.IsCharging)
                         {
-                            if (MyMenu.RootMenu.Item("castmode").GetValue<StringList>().SelectedIndex == 0)
-                            {
-                                this.SpellObject.Cast(target);
-                            }
-                            else
-                            {
-                                var prediction = this.SpellObject.GetPrediction(target);
-                                if (prediction.Hitchance >= HitChance.VeryHigh)
-                                {
-                                    this.SpellObject.Cast(prediction.CastPosition);
-                                }
-                            }
-                        }
-
-                        if (this.SpellObject.IsCharging)
-                        {
-                            if (target.Distance(ObjectManager.Player) < this.Range)
+                            if (this.Range >= this.MaxRange || target.Distance(ObjectManager.Player) < this.Range + 200 || 
+                                (this.SpellObject.GetPrediction(target).Hitchance >= HitChance.VeryHigh) && target.Distance(ObjectManager.Player) > this.Range + 200
+                                && target.Distance(ObjectManager.Player) < this.MaxRange)
                             {
                                 this.SpellObject.Cast(target);
                             }
@@ -148,6 +134,17 @@
                         }
 
                         this.SpellObject.Cast(target);
+                    }
+
+                    if (MyMenu.RootMenu.Item("forceqalwaysxd").IsActive())
+                    {
+                        var multipleTargets = HeroManager.Enemies.Where(x => x.IsValidTarget(this.Range + this.Width) && !x.IsDead && !x.IsZombie);
+                        foreach (var targetInRange in multipleTargets)
+                        {
+                            this.SpellObject.CastIfWillHit(
+                                targetInRange,
+                                MyMenu.RootMenu.Item("combow.count.Q").GetValue<Slider>().Value);
+                        }
                     }
                 }
             }

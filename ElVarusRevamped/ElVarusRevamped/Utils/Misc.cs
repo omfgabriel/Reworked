@@ -1,6 +1,7 @@
 ﻿namespace ElVarusRevamped.Utils
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
     using ElVarusRevamped.Components.Spells;
@@ -8,6 +9,10 @@
 
     using LeagueSharp;
     using LeagueSharp.Common;
+
+    using SharpDX;
+
+    using Collision = LeagueSharp.Common.Collision;
 
     /// <summary>
     ///     The misc.
@@ -47,6 +52,70 @@
                 Logging.AddEntry(LoggingEntryTrype.Error, "@Misc.cs: Can not return target - {0}", e);
                 throw;
             }
+        }
+
+        /// <summary>
+        ///     Gets the Q Collision count.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="castPos"></param>
+        /// <returns></returns>
+        internal static int GetQCollisionsCount(Obj_AI_Hero target, Vector3 castPos)
+        {
+            var input = new PredictionInput
+            {
+                Unit = target,
+                Radius = SpellQ.SpellObject.Width,
+                Delay = SpellQ.SpellObject.Delay,
+                Speed = SpellQ.SpellObject.Speed,
+                CollisionObjects = new[] { CollisionableObjects.Heroes, CollisionableObjects.Minions }
+            };
+            return
+                Collision.GetCollision(
+                    new List<Vector3> { ObjectManager.Player.Position.Extend(castPos, SpellQ.Range + SpellQ.Width) }, input).Count;
+        }
+        /// <summary>
+        ///     Gets if Q is killable.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="collisions"></param>
+        /// <returns></returns>
+        internal static bool QIsKillable(Obj_AI_Hero target, int collisions)
+        {
+            return target.Health + target.HPRegenRate / 2f < GetQDamage(target, collisions);
+        }
+
+        /// <summary>
+        ///     Gets the Q damage.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="collisions"></param>
+        /// <returns></returns>
+        internal static float GetQDamage(Obj_AI_Hero target, int collisions)
+        {
+            if (Misc.SpellQ.SpellObject.Level == 0)
+            {
+                return 0;
+            }
+            var chargePercentage = Misc.SpellQ.Range / Misc.SpellQ.MaxRange;
+            var damage =
+                (float)
+                    (new float[] { 10, 46, 83, 120, 156 }[Misc.SpellQ.SpellObject.Level - 1] +
+                     new float[] { 5, 23, 41, 60, 78 }[Misc.SpellQ.SpellObject.Level - 1] * chargePercentage +
+                     chargePercentage * (ObjectManager.Player.TotalAttackDamage + ObjectManager.Player.TotalAttackDamage * .6));
+
+            var minimum = damage / 100f * 33f;
+            for (var i = 0; i < collisions; i++)
+            {
+                var reduce = damage / 100f * 15f;
+                if (damage - reduce < minimum)
+                {
+                    damage = minimum;
+                    break;
+                }
+                damage -= reduce;
+            }
+            return (float)ObjectManager.Player.CalcDamage(target, Damage.DamageType.Physical, damage);
         }
 
         /// <summary>

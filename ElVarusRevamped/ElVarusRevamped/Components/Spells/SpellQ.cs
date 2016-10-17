@@ -157,30 +157,22 @@
             var target = Misc.GetTarget((this.MaxRange + this.Width) * 1.1f, this.DamageType);
             if (target != null)
             {
-                if (this.SpellObject.IsCharging ||
-                    MyMenu.RootMenu.Item("mixedqusealways").IsActive() || target.Distance(ObjectManager.Player) > Orbwalking.GetRealAutoAttackRange(target) * 1.2f ||
-                    Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("mixedqusealways.count").GetValue<Slider>().Value)
+                if (!this.SpellObject.IsCharging)
                 {
-                    if (!this.SpellObject.IsCharging)
+                    if (MyMenu.RootMenu.Item("mixedqusealways").IsActive()
+                        || target.Distance(ObjectManager.Player) > Orbwalking.GetRealAutoAttackRange(target) * 1.2f
+                        || Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("mixedqusealways.count").GetValue<Slider>().Value)
                     {
                         this.SpellObject.StartCharging();
                     }
+                }
 
-                    if (this.SpellObject.IsCharging)
+                if (this.SpellObject.IsCharging)
+                {
+                   if(this.Range >= this.MaxRange || target.Distance(ObjectManager.Player) < this.Range + 250 
+                        || (this.SpellObject.GetPrediction(target).Hitchance >= HitChance.VeryHigh) || target.Distance(ObjectManager.Player) < this.Range)
                     {
-                        var prediction = this.SpellObject.GetPrediction(target);
-                        if (prediction.Hitchance >= HitChance.High)
-                        {
-                            this.SpellObject.Cast(prediction.CastPosition);
-                        }
-                    }
-                    
-                    if (this.SpellObject.IsCharging)
-                    {
-                        if (target.Distance(ObjectManager.Player) < this.Range)
-                        {
-                            this.SpellObject.Cast(target);
-                        }
+                        this.SpellObject.Cast(target);
                     }
                 }
             }

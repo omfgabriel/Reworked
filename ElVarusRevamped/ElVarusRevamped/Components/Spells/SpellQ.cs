@@ -68,7 +68,7 @@
         /// <summary>
         ///     Gets the delta T
         /// </summary>
-        internal override float DeltaT => 1.5f;
+        internal override float DeltaT => 1.2f;
 
         /// <summary>
         ///     Gets the spellname.

@@ -83,9 +83,19 @@
                 if (target != null)
                 {
                     if (MyMenu.RootMenu.Item("comboealways").IsActive() || 
-                        this.SpellObject.IsKillable(target) || Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("comboew.count").GetValue<Slider>().Value)
+                        this.SpellObject.IsKillable(target) || 
+                        (Misc.BlightedQuiver.Level > 0 && Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("comboew.count").GetValue<Slider>().Value))
                     {
-                        this.SpellObject.Cast(target);
+                        if ((!MyMenu.RootMenu.Item("comboealways").IsActive()
+                             && Misc.LastQ + 200 < Environment.TickCount) || this.SpellObject.IsKillable(target))
+                        {
+                            this.SpellObject.Cast(target);
+                            Misc.LastE = Environment.TickCount;
+                        }
+                        else
+                        {
+                            this.SpellObject.Cast(target);
+                        }
                     }
 
                     var multipleTargets = HeroManager.Enemies.Where(x => x.IsValidTarget(this.Range + this.Width) && !x.IsDead && !x.IsZombie);

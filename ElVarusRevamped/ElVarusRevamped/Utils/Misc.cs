@@ -37,6 +37,16 @@
         public static SpellR SpellR;
 
         /// <summary>
+        ///     The Passive.
+        /// </summary>
+        public static Spell BlightedQuiver { get; set; }
+
+        /// <summary>
+        ///     
+        /// </summary>
+        public static int LastQ, LastE;
+
+        /// <summary>
         ///     Gets the target W stacks
         /// </summary>
         /// <param name="target"></param>

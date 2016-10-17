@@ -41,6 +41,7 @@
                 Misc.SpellQ = new SpellQ();
                 Misc.SpellE = new SpellE();
                 Misc.SpellR = new SpellR();
+                Misc.BlightedQuiver = new Spell(SpellSlot.W, 0, TargetSelector.DamageType.Magical);
             }
             catch (Exception e)
             {
@@ -52,6 +53,7 @@
             AntiGapcloser.OnEnemyGapcloser += this.OnEnemyGapcloser;
         }
 
+        
 
         /// <summary>
         ///     

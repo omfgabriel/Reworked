@@ -103,47 +103,41 @@
 
                 var target = Misc.GetTarget((this.MaxRange + this.Width) * 1.1f, this.DamageType);
                 if (target != null)
-                {
-                   if (this.SpellObject.IsCharging ||
-                         Misc.QIsKillable(target, Misc.GetQCollisionsCount(target, this.SpellObject.GetPrediction(target).CastPosition)) ||
-                        MyMenu.RootMenu.Item("comboqalways").IsActive() ||
-                        (Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("combow.count").GetValue<Slider>().Value))
+                {                  
+                    if (!this.SpellObject.IsCharging)
                     {
-                        if (!this.SpellObject.IsCharging)
+                        if (MyMenu.RootMenu.Item("comboqalways").IsActive()
+                            || Misc.QIsKillable(target, Misc.GetQCollisionsCount(target, this.SpellObject.GetPrediction(target).CastPosition)) 
+                            || (Misc.BlightedQuiver.Level > 0 && Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("combow.count").GetValue<Slider>().Value))
                         {
                             this.SpellObject.StartCharging();
                         }
-                        // todo : make range check optional
-                        if (this.SpellObject.IsCharging)
+                    }
+
+                    if (this.SpellObject.IsCharging)
+                    {
+                        if (this.Range >= this.MaxRange || target.Distance(ObjectManager.Player) < this.Range + 250
+                            || (this.SpellObject.GetPrediction(target).Hitchance >= HitChance.VeryHigh)
+                            && target.Distance(ObjectManager.Player) > this.Range + 250
+                            && target.Distance(ObjectManager.Player) < this.MaxRange || ObjectManager.Player.HealthPercent <= MyMenu.RootMenu.Item("comboq.fast").GetValue<Slider>().Value)
                         {
-                            if (this.Range >= this.MaxRange || target.Distance(ObjectManager.Player) < this.Range + 250 || 
-                                (this.SpellObject.GetPrediction(target).Hitchance >= HitChance.VeryHigh) && target.Distance(ObjectManager.Player) > this.Range + 250
-                                && target.Distance(ObjectManager.Player) < this.MaxRange)
+                            if (!this.SpellObject.IsCharging)
+                            {
+                                Logging.AddEntry(LoggingEntryTrype.Info, "Return Charging");
+                                return;
+                            }
+
+                            if ((!MyMenu.RootMenu.Item("comboqalways").IsActive()
+                                 && Misc.LastE + 200 < Environment.TickCount) || 
+                                 Misc.QIsKillable(target, Misc.GetQCollisionsCount(target, this.SpellObject.GetPrediction(target).CastPosition)))
+                            {
+                                this.SpellObject.Cast(target);
+                                Misc.LastQ = Environment.TickCount;
+                            }
+                            else
                             {
                                 this.SpellObject.Cast(target);
                             }
-                        }
-                    }
-
-                    if (ObjectManager.Player.HealthPercent
-                        <= MyMenu.RootMenu.Item("comboq.fast").GetValue<Slider>().Value)
-                    {
-                        if (!this.SpellObject.IsCharging)
-                        {
-                            this.SpellObject.StartCharging();
-                        }
-
-                        this.SpellObject.Cast(target);
-                    }
-
-                    if (MyMenu.RootMenu.Item("forceqalwaysxd").IsActive())
-                    {
-                        var multipleTargets = HeroManager.Enemies.Where(x => x.IsValidTarget(this.Range + this.Width) && !x.IsDead && !x.IsZombie);
-                        foreach (var targetInRange in multipleTargets)
-                        {
-                            this.SpellObject.CastIfWillHit(
-                                targetInRange,
-                                MyMenu.RootMenu.Item("combow.count.Q").GetValue<Slider>().Value);
                         }
                     }
                 }
@@ -183,10 +177,10 @@
                     
                     if (this.SpellObject.IsCharging)
                     {
-                         if (target.Distance(ObjectManager.Player) < this.Range)
-                         {
-                             this.SpellObject.Cast(target);
-                         }
+                        if (target.Distance(ObjectManager.Player) < this.Range)
+                        {
+                            this.SpellObject.Cast(target);
+                        }
                     }
                 }
             }

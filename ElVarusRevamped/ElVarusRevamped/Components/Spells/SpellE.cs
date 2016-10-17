@@ -31,7 +31,7 @@
         /// <summary>
         ///     Gets the delay.
         /// </summary>
-        internal override float Delay => 1000f;
+        internal override float Delay => 250f;
 
         /// <summary>
         ///     Gets the range.

@@ -123,7 +123,6 @@
                         {
                             if (!this.SpellObject.IsCharging)
                             {
-                                Logging.AddEntry(LoggingEntryTrype.Info, "Return Charging");
                                 return;
                             }
 

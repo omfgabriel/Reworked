@@ -161,7 +161,7 @@
                 {
                     if (MyMenu.RootMenu.Item("mixedqusealways").IsActive()
                         || target.Distance(ObjectManager.Player) > Orbwalking.GetRealAutoAttackRange(target) * 1.2f
-                        || Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("mixedqusealways.count").GetValue<Slider>().Value)
+                        || (Misc.BlightedQuiver.Level > 0 && Misc.GetWStacks(target) >= MyMenu.RootMenu.Item("mixedqusealways.count").GetValue<Slider>().Value))
                     {
                         this.SpellObject.StartCharging();
                     }

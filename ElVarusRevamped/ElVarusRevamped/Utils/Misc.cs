@@ -27,6 +27,11 @@
         public static SpellE SpellE;
 
         /// <summary>
+        ///     Spell R.
+        /// </summary>
+        public static SpellR SpellR;
+
+        /// <summary>
         ///     Gets the target W stacks
         /// </summary>
         /// <param name="target"></param>

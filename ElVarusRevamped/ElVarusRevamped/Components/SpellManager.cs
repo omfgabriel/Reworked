@@ -40,6 +40,7 @@
                 this.LoadSpells(new List<ISpell>() { new SpellQ(), new SpellE(), new SpellR() });
                 Misc.SpellQ = new SpellQ();
                 Misc.SpellE = new SpellE();
+                Misc.SpellR = new SpellR();
             }
             catch (Exception e)
             {
@@ -65,17 +66,25 @@
                     return;
                 }
 
-
-                if (!MyMenu.RootMenu.Item("gapcloser" + gapcloser.Sender.CharData.BaseSkinName + "use").IsActive())
+                if (MyMenu.RootMenu.Item("gapcloserruse").IsActive() && Misc.SpellR.SpellSlot.IsReady())
                 {
-                    return;
+                    if (MyMenu.RootMenu.Item("gapcloserr" + gapcloser.Sender.ChampionName + "use").IsActive())
+                    {
+                        if (gapcloser.Sender.IsValidTarget(Misc.SpellR.Range))
+                        {
+                            Misc.SpellR.SpellObject.Cast(gapcloser.Sender.ServerPosition);
+                        }
+                    }
                 }
 
                 if (MyMenu.RootMenu.Item("gapclosereuse").IsActive() && Misc.SpellE.SpellSlot.IsReady())
                 {
-                    if (gapcloser.End.Distance(ObjectManager.Player.Position) <= Misc.SpellE.Range)
-                    {
-                        Misc.SpellE.SpellObject.Cast(gapcloser.End);
+                    if (MyMenu.RootMenu.Item("gapcloser" + gapcloser.Sender.ChampionName + "use").IsActive())
+                    {                  
+                        if (gapcloser.End.Distance(ObjectManager.Player.Position) <= Misc.SpellE.Range)
+                        {
+                            Misc.SpellE.SpellObject.Cast(gapcloser.End);
+                        }
                     }
                 }
             }

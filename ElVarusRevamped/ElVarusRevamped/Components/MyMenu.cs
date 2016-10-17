@@ -169,27 +169,39 @@
                     node.AddSubMenu(nodeLaneClear);
                 }
 
-                if (!spellSlotNameLower.Equals("r", StringComparison.InvariantCultureIgnoreCase))
+                var nodeMisc = new Menu("Miscellaneous", spellSlotNameLower + "miscmenu");
                 {
-                    var nodeMisc = new Menu("Miscellaneous", spellSlotNameLower + "miscmenu");
+                    if (spellSlotNameLower.Equals("q", StringComparison.InvariantCultureIgnoreCase)
+                        || spellSlotNameLower.Equals("e", StringComparison.InvariantCultureIgnoreCase))
                     {
                         nodeMisc.AddItem(new MenuItem("killsteal" + spellSlotNameLower + "use", "Use " + spellSlotName + " to killsteal").SetValue(false));
                         nodeMisc.AddItem(new MenuItem("killsteal" + spellSlotNameLower + "mana", "Min. Mana").SetValue(new Slider(5)));
+                    }
 
-                        if (spellSlotNameLower.Equals("e", StringComparison.InvariantCultureIgnoreCase))
+                    if (spellSlotNameLower.Equals("r", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        nodeMisc.AddItem(new MenuItem("gapcloserruse", "Use " + spellSlotName + " for gapclosers").SetValue(false));
+                        nodeMisc.AddItem(new MenuItem("combo.separator-232222", "R GAPCLOSER LIST")).SetFontStyle(FontStyle.Bold, Color.Chartreuse);
+                        foreach (var enemy in HeroManager.Enemies)
                         {
-                            nodeMisc.AddItem(new MenuItem("gapclosereuse", "Use " + spellSlotName + " for gapclosers").SetValue(true));
-                            nodeMisc.AddItem(new MenuItem("combo.separator-2", String.Empty));
-
-                            foreach (var enemy in HeroManager.Enemies)
-                            {
-                                nodeMisc.AddItem(new MenuItem("gapcloser" + enemy.CharData.BaseSkinName + "use", "Gapcloser: " + enemy.CharData.BaseSkinName).SetValue(true));
-                            }
+                            nodeMisc.AddItem(new MenuItem("gapcloserr" + enemy.ChampionName + "use", "Gapcloser: " + enemy.ChampionName).SetValue(true));
                         }
                     }
 
-                    node.AddSubMenu(nodeMisc);
+                    if (spellSlotNameLower.Equals("e", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        nodeMisc.AddItem(new MenuItem("E.separator-22", String.Empty));
+                        nodeMisc.AddItem(new MenuItem("gapclosereuse", "Use " + spellSlotName + " for gapclosers").SetValue(true));
+                        nodeMisc.AddItem(new MenuItem("combo.separator-2322", "E GAPCLOSER LIST")).SetFontStyle(FontStyle.Bold, Color.Chartreuse);
+
+                        foreach (var enemy in HeroManager.Enemies)
+                        {
+                            nodeMisc.AddItem(new MenuItem("gapcloser" + enemy.ChampionName + "use", "Gapcloser: " + enemy.ChampionName).SetValue(true));
+                        }
+                    }
                 }
+
+                node.AddSubMenu(nodeMisc);
 
                 RootMenu.AddSubMenu(node);
             }

@@ -47,6 +47,9 @@
             }
 
             Game.OnUpdate += this.Game_OnUpdate;
+            Obj_AI_Base.OnBuffAdd += PassiveManager.Obj_AI_Base_OnBuffAdd;
+            Obj_AI_Base.OnBuffRemove += PassiveManager.Obj_AI_Base_OnBuffRemove;
+            Obj_AI_Base.OnBuffUpdateCount += PassiveManager.Obj_AI_Base_OnBuffUpdateCount;
         }
 
         #endregion

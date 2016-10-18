@@ -37,9 +37,9 @@
         internal static SpellR SpellR;
 
         /// <summary>
-        ///     The Flurry stacks.
+        ///     The passive buffname.
         /// </summary>
-        internal static int FlurryStacks;
+        internal static String BlindMonkFlurry = "BlindMonkFlurry";
 
         /// <summary>
         ///     Gets the Q Instance name

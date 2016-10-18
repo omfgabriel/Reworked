@@ -77,22 +77,44 @@
                         return;
                     }
 
-                    var enemiesCount =
-                        HeroManager.Enemies.Count(
-                            h =>
-                                h.IsValid && !h.IsDead && h.IsVisible
-                                && h.Distance(ObjectManager.Player) < (Misc.IsEOne ? this.Range : 500));
-
-                    if (enemiesCount > 0)
+                    if (Misc.IsEOne)
                     {
-                        // todo : Passive stacks.
-                        if (Misc.IsEOne)
+                        var enemiesCount =
+                            HeroManager.Enemies.Where(
+                                h =>
+                                    h.IsValid && !h.IsDead && h.IsVisible
+                                    && h.Distance(ObjectManager.Player) < this.Range).ToList();
+
+                        if (enemiesCount.Count == 0)
                         {
-                            this.SpellObject.Cast();
+                            return;
                         }
-                        else
+
+                        if (PassiveManager.FlurryStacks == 0 && ObjectManager.Player.Mana >= 75 || enemiesCount.Count >= 2 
+                            || enemiesCount.Any(t => t.Distance(ObjectManager.Player) > Orbwalking.GetRealAutoAttackRange(ObjectManager.Player)))
                         {
                             this.SpellObject.Cast();
+                            Logging.AddEntry(LoggingEntryTrype.Debug, "@SpellE.cs: Casted first E");
+                        }
+                    }
+                    else
+                    {
+                        var enemiesCount =
+                            HeroManager.Enemies.Where(
+                                h =>
+                                    h.IsValid && !h.IsDead && h.IsVisible && Misc.HasBlindMonkTempest(h)
+                                    && h.Distance(ObjectManager.Player) < 500f).ToList();
+
+                        if (enemiesCount.Count == 0)
+                        {
+                            return;
+                        }
+
+                        if ((PassiveManager.FlurryStacks == 0 || enemiesCount.Count >= 2) 
+                            || enemiesCount.Any(t => t.Distance(ObjectManager.Player) > Orbwalking.GetRealAutoAttackRange(ObjectManager.Player)))
+                        {
+                            this.SpellObject.Cast();
+                            Logging.AddEntry(LoggingEntryTrype.Debug, "@SpellE.cs: Casted second E");
                         }
                     }
                 }

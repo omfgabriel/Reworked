@@ -59,6 +59,11 @@
                 var nodeCombo = new Menu("Combo", spellSlotNameLower + "combomenu");
                 {
                     nodeCombo.AddItem(new MenuItem("combo" + spellSlotNameLower + "use", "Use " + spellSlotName).SetValue(true));
+
+                    if (spellSlotNameLower.Equals("q", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        nodeCombo.AddItem(new MenuItem("combo" + spellSlotNameLower + "2use", "Use " + spellSlotName).SetValue(true));
+                    }
                 }
 
                 node.AddSubMenu(nodeCombo);

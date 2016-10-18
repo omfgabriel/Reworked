@@ -72,6 +72,13 @@
                 var target = Misc.GetTarget(this.Range, this.DamageType);
                 if (target != null)
                 {
+                    if (this.SpellObject.IsInRange(target))
+                    {
+                        if (this.SpellObject.GetDamage(target) > target.Health)
+                        {
+                            this.SpellObject.CastOnUnit(target);
+                        }
+                    }
                 }
             }
             catch (Exception e)
@@ -89,6 +96,12 @@
             this.OnCombo();
         }
 
+        /// <summary>
+        ///     The on update callback.
+        /// </summary>
+        internal override void OnUpdate()
+        {
+        }
 
         /// <summary>
         ///     The on last hit callback.

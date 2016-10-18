@@ -47,14 +47,42 @@
             }
 
             Game.OnUpdate += this.Game_OnUpdate;
+            Obj_AI_Base.OnProcessSpellCast += this.Obj_AI_Base_OnProcessSpellCast;
             Obj_AI_Base.OnBuffAdd += PassiveManager.Obj_AI_Base_OnBuffAdd;
             Obj_AI_Base.OnBuffRemove += PassiveManager.Obj_AI_Base_OnBuffRemove;
             Obj_AI_Base.OnBuffUpdateCount += PassiveManager.Obj_AI_Base_OnBuffUpdateCount;
         }
 
+
         #endregion
 
         #region Methods
+
+        /// <summary>
+        ///     Fired when the game processes a spell cast.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="args">The <see cref="GameObjectProcessSpellCastEventArgs" /> instance containing the event data.</param>
+        internal void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
+        {
+            try
+            {
+                if (!sender.IsMe)
+                {
+                    return;
+                }
+
+                if (args.SData.Name.Equals(Misc.BlindMonkQOne, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    Utility.DelayAction.Add(2900, () => { Misc.CanCastQ2 = true; });
+                }
+            }
+            catch (Exception e)
+            {
+                Logging.AddEntry(LoggingEntryTrype.Error, "@SpellManager.cs: Can not {0} -", e);
+                throw;
+            }
+        }
 
         /// <summary>
         ///     The is the spell active method.

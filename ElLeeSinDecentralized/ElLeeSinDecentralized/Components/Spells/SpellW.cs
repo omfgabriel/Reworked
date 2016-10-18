@@ -68,6 +68,8 @@
                 if (target != null)
                 {
                 }
+
+                //WardManager.WardjumpHandler(Game.CursorPos, maxrangeJump: true);
             }
             catch (Exception e)
             {
@@ -84,6 +86,12 @@
             this.OnCombo();
         }
 
+        /// <summary>
+        ///     The on update callback.
+        /// </summary>
+        internal override void OnUpdate()
+        {
+        }
 
         /// <summary>
         ///     The on last hit callback.

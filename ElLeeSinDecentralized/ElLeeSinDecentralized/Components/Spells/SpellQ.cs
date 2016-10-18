@@ -58,6 +58,11 @@
         /// </summary>
         internal override float Width => 65f;
 
+        /// <summary>
+        ///     Gets the BlindMonkTwoRange
+        /// </summary>
+        internal const float BlindMonkTwoRange = 1300f;
+
         #endregion
 
         #region Methods
@@ -91,8 +96,6 @@
                             this.Speed,
                             new CollisionableObjects[] { CollisionableObjects.YasuoWall, CollisionableObjects.Minions });
 
-                        Logging.AddEntry(LoggingEntryTrype.Info, "SpellQ.cs:  Hitchance {0} - target: {1}", pred.Hitchance, target.ChampionName);
-
                         if (pred.Hitchance >= HitChance.High)
                         {
                             this.SpellObject.Cast(target);
@@ -100,7 +103,19 @@
                     }
                     else
                     {
-                        this.SpellObject.Cast();
+                        if (MyMenu.RootMenu.Item("comboq2use").IsActive())
+                        {
+                            if (ObjectManager.Player.IsDashing() || !Misc.HasBlindMonkQOne(target) || (Misc.HasBlindMonkQOne(target) && target.Distance(ObjectManager.Player) > BlindMonkTwoRange))
+                            {
+                                return;
+                            }
+
+                            if (Misc.CanCastQ2 || this.SpellObject.GetDamage(target, 1) > target.Health + target.PhysicalShield 
+                                || ObjectManager.Player.Distance(target) > Orbwalking.GetRealAutoAttackRange(ObjectManager.Player) || PassiveManager.FlurryStacks == 0)
+                            {
+                                this.SpellObject.Cast();
+                            }
+                        }
                     }
                 }
             }

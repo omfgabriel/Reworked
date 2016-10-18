@@ -1,6 +1,7 @@
 ﻿namespace ElLeeSinDecentralized.Utils
 {
     using System;
+    using System.ComponentModel;
     using System.Linq;
 
     using ElLeeSinDecentralized.Components.Spells;
@@ -42,13 +43,24 @@
         internal static String BlindMonkFlurry = "BlindMonkFlurry";
 
         /// <summary>
+        ///     The Q buffname.
+        /// </summary>
+        internal static String BlindMonkQOne = "BlindMonkQOne";
+
+        /// <summary>
+        ///     Gets the Q2 safety check value.
+        /// </summary>
+        [DefaultValue(false)]
+        internal static bool CanCastQ2 { get; set; }
+
+        /// <summary>
         ///     Gets the Q Instance name
         /// </summary>
         /// <value>
         ///     Q instance name
         /// </value>
         internal static bool IsQOne
-            => SpellQ.SpellObject.Instance.Name.Equals("BlindMonkQOne", StringComparison.InvariantCultureIgnoreCase);
+            => SpellQ.SpellObject.Instance.Name.Equals(BlindMonkQOne, StringComparison.InvariantCultureIgnoreCase);
 
 
         /// <summary>
@@ -68,6 +80,20 @@
         /// </value>
         internal static bool IsWOne
             => SpellW.SpellObject.Instance.Name.Equals("BlindMonkWOne", StringComparison.InvariantCultureIgnoreCase);
+
+        /// <summary>
+        ///     Checks if a target has the BlindMonkQOne buff.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        internal static bool HasBlindMonkQOne(Obj_AI_Hero target) => target.HasBuff("BlindMonkQOne");
+
+        /// <summary>
+        ///     Checks if a target has the BlindMonkTempest buff.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        internal static bool HasBlindMonkTempest(Obj_AI_Hero target) => target.HasBuff("BlindMonkTempest");
 
         /// <summary>
         ///     Gets a target from the common target selector.

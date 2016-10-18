@@ -1,6 +1,9 @@
 ﻿namespace ElLeeSinDecentralized.Utils
 {
     using System;
+
+    using ElLeeSinDecentralized.Enumerations;
+
     using LeagueSharp;
 
     internal class PassiveManager
@@ -17,14 +20,22 @@
         /// <param name="args"></param>
         internal static void Obj_AI_Base_OnBuffAdd(Obj_AI_Base sender, Obj_AI_BaseBuffAddEventArgs args)
         {
-            if (!sender.IsMe)
+            try
             {
-                return;
-            }
+                if (!sender.IsMe)
+                {
+                    return;
+                }
 
-            if (args.Buff.DisplayName.Equals(Misc.BlindMonkFlurry, StringComparison.InvariantCultureIgnoreCase))
+                if (args.Buff.DisplayName.Equals(Misc.BlindMonkFlurry, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    FlurryStacks = 2;
+                }
+            }
+            catch (Exception e)
             {
-                FlurryStacks = 2;
+                Logging.AddEntry(LoggingEntryTrype.Error, "@PassiveManager.cs: Can not {0} -", e);
+                throw;
             }
         }
 
@@ -35,14 +46,22 @@
         /// <param name="args"></param>
         internal static void Obj_AI_Base_OnBuffRemove(Obj_AI_Base sender, Obj_AI_BaseBuffRemoveEventArgs args)
         {
-            if (!sender.IsMe)
+            try
             {
-                return;
-            }
+                if (!sender.IsMe)
+                {
+                    return;
+                }
 
-            if (args.Buff.DisplayName.Equals(Misc.BlindMonkFlurry, StringComparison.InvariantCultureIgnoreCase))
+                if (args.Buff.DisplayName.Equals(Misc.BlindMonkFlurry, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    FlurryStacks = 0;
+                }
+            }
+            catch (Exception e)
             {
-                FlurryStacks = 0;
+                Logging.AddEntry(LoggingEntryTrype.Error, "@PassiveManager.cs: Can not {0} -", e);
+                throw;
             }
         }
 
@@ -53,12 +72,20 @@
         /// <param name="args"></param>
         internal static void Obj_AI_Base_OnBuffUpdateCount(Obj_AI_Base sender, Obj_AI_BaseBuffUpdateCountEventArgs args)
         {
-            if (!sender.IsMe || !args.Buff.DisplayName.Equals(Misc.BlindMonkFlurry, StringComparison.InvariantCultureIgnoreCase))
+            try
             {
-                return;
-            }
+                if (!sender.IsMe || !args.Buff.DisplayName.Equals(Misc.BlindMonkFlurry, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return;
+                }
 
-            FlurryStacks = args.Buff.Count;
+                FlurryStacks = args.Buff.Count;
+            }
+            catch (Exception e)
+            {
+                Logging.AddEntry(LoggingEntryTrype.Error, "@PassiveManager.cs: Can not {0} -", e);
+                throw;
+            }
         }
     }
 }
